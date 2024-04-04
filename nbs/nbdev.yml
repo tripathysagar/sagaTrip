@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "sagaTrip"
+  site-url: "https://tripathysagar.github.io/sagaTrip"
+  description: ""
+  repo-branch: main
+  repo-url: "https://github.com/tripathysagar/sagaTrip"
