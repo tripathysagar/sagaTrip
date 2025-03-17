@@ -1,0 +1,82 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Sagar Tripathy",
+    "section": "",
+    "text": "This is a repo for blog.",
+    "crumbs": [
+      "Sagar Tripathy"
+    ]
+  },
+  {
+    "objectID": "broadcasting.html",
+    "href": "broadcasting.html",
+    "title": "Broadcasting",
+    "section": "",
+    "text": "Goal is to write a blog around broadcasting around pytorch which is backbone of deeplearning.",
+    "crumbs": [
+      "Broadcasting"
+    ]
+  },
+  {
+    "objectID": "broadcasting.html#the-need-for-broadcasting",
+    "href": "broadcasting.html#the-need-for-broadcasting",
+    "title": "Broadcasting",
+    "section": "The Need for Broadcasting",
+    "text": "The Need for Broadcasting\n\nEfficiency in Operations: Without broadcasting, you’d need to manually resize arrays to perform operations between differently shaped tensors. This would require writing explicit loops or creating temporary copies of data, both of which are inefficient.\nCode Readability: Imagine having to write nested loops every time you want to add a scalar to each element in a matrix, or add corresponding elements of arrays with different dimensions. Your code would become cluttered and harder to understand.\nMemory Optimization: Broadcasting allows operations without actually duplicating the data in memory. This is crucial when working with large tensors in deep learning.\n\n\nimport torch \n\nA = torch.randn((256, 128))\nB = torch.randn((128, 64))\n\n\nUsing loops\nOfcourse we can simply do A.matmul(B) but we want to learn broadcasting. Lets start by a traditional approach i.e. loops.\n\ndef mul1(a, b):\n    ar, ac = a.shape\n    br, bc = b.shape\n    c = torch.zeros((ar, bc))\n\n    for i in range(ar):\n        for j in range(bc):\n            temp = 0.\n            for k in range(ac):\n                temp += a[i,k]* b[k, j]\n            c[i,j] = temp\n    \n    return c\n\n\nc = mul1(A, B)\n\nCPU times: user 4 µs, sys: 0 ns, total: 4 µs\nWall time: 7.63 µs",
+    "crumbs": [
+      "Broadcasting"
+    ]
+  },
+  {
+    "objectID": "broadcasting.html#removing-innermost-loop",
+    "href": "broadcasting.html#removing-innermost-loop",
+    "title": "Broadcasting",
+    "section": "Removing innermost loop",
+    "text": "Removing innermost loop\n\ndef mul2(a, b):\n    ar, ac = a.shape\n    br, bc = b.shape\n    c = torch.zeros((ar, bc))\n\n    for i in range(ar):\n        for j in range(bc):\n            \n            c[i,j] = torch.sum(a[i,:]*b[:,j])\n    \n    return c\n\n\nassert torch.allclose(c, mul2(A, B),  rtol=1e-2) ## for checking if the result are same\n\n\n_ = mul2(A, B)\n\nCPU times: user 6 µs, sys: 0 ns, total: 6 µs\nWall time: 13.6 µs\n\n\nRules for broadcasting PyTorch compares the shapes element-wise, starting from the rightmost dimension Dimensions are compatible when: - They are equal, or - One of them is 1 (which gets “stretched”), or - One doesn’t exist (which gets “added” as a dimension of size 1)\n\nT = torch.randn((3))\nS = torch.tensor(5)\n\nT.shape, S.shape\n\n(torch.Size([3]), torch.Size([]))\n\n\n\n\n\nFlow Diagram",
+    "crumbs": [
+      "Broadcasting"
+    ]
+  },
+  {
+    "objectID": "broadcasting.html#with-only-one-loop",
+    "href": "broadcasting.html#with-only-one-loop",
+    "title": "Broadcasting",
+    "section": "With only one loop",
+    "text": "With only one loop\n\ndef mul3(a, b):\n    ar, ac = a.shape\n    br, bc = b.shape\n    c = torch.zeros((ar, bc))\n\n    for i in range(ar):\n        c[i] = A[i] @ B  # dim[128] * dim[128,64]\n    return c\n\n\nassert torch.allclose(c, mul3(A, B),  rtol=1e-2)\n\n\n_ = mul3(A, B)\n\nCPU times: user 4 µs, sys: 0 ns, total: 4 µs\nWall time: 8.34 µs",
+    "crumbs": [
+      "Broadcasting"
+    ]
+  },
+  {
+    "objectID": "broadcasting.html#matrix-multiplication",
+    "href": "broadcasting.html#matrix-multiplication",
+    "title": "Broadcasting",
+    "section": "matrix multiplication",
+    "text": "matrix multiplication\nbest and fastest\n\n_ = A @ B\n\nCPU times: user 5 µs, sys: 0 ns, total: 5 µs\nWall time: 7.39 µs",
+    "crumbs": [
+      "Broadcasting"
+    ]
+  },
+  {
+    "objectID": "cnn_basics.html",
+    "href": "cnn_basics.html",
+    "title": "CNN basics",
+    "section": "",
+    "text": "Lack of Spatial Awareness: Traditional artificial neural networks (ANNs) fail to capture the relationships between nearby pixels, making it challenging to localize objects within an image accurately.\nSequential Processing: ANNs process images pixel by pixel, which can lead to difficulties in understanding the overall essence of the image, especially if the image is geometrically transformed or if the pixel density varies.\n\nThe new architect should share the weights for all the pixels of the image and that need to be transmitted independently to further layer. And be invariant to transformation. The operation should be commutative, \\(F\\):convolution and \\(f\\):geomertic operation then \\(F(f(x)) = f(F(x))\\).\nIn walks the Convolution. It uses a lot of kernels which loopover all the pixel of image and do element-wise summarization.\n\nim = Image.open(path).reshape(200,200)\n\nshow_image(im, title=f'height*weight : {im.shape}');\n\n\n\n\n\n\n\n\n\nim_t = tensor(im)\nim_t.shape, im_t.dtype\n\n(torch.Size([200, 200, 3]), torch.uint8)\n\n\n\ndef apply_kernel(row, col, kernel):\n    return (im_t[row-1:row+2, col-1:col+2] * kernel).sum()\ndef traverse(kernel, stride=1):\n    rng = range(1, 199, stride)\n    return tensor([[apply_kernel(i, j, kernel) for j in rng] for i in rng])\n\n\ntop_edge = tensor([[-1, -1, -1],\n                   [0, 0, 0],\n                   [1, 1, 1]])\n\nbuttom_edge = tensor([[1, 1, 1],\n                      [0, 0, 0],\n                      [-1, -1, -1]])\n\navg = tensor([[1/9, 1/9, 1/9],\n            [1/9, 1/9, 1/9],\n            [1/9, 1/9, 1/9]])\n\n\ntop_im = traverse(top_edge)\nbuttom_im = traverse(buttom_edge)\navg_im = traverse(avg)\n\n\nshow_images((top_im, buttom_im, avg_im), titles=(\"convolution: top edge kernel\", \"convolution: buttom edge kernel\", \"convolution: average\"), imsize=4, );\n\n\n\n\n\n\n\n\nConvolution has several important properties that are crucial for its effectiveness in image processing and deep learning:\n\nKernel Size: The size of the convolution kernel is region that is considered during the convolution operation. It is typically specified as a square matrix with odd width and height (e.g., 3x3, 5x5) to ensure symmetry around the central element.\n\nKernel for average/blurr kernel : \\[\\begin{bmatrix}\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\end{bmatrix}\n  \\]\n\nPadding: Padding involves adding dummy pixels (usually zeros) around the borders of the input image. This is done to maintain the spatial dimensions of the output feature maps after convolution. The amount of padding is often determined by the kernel size, with a common choice being \\(\\lfloor \\frac{kernel\\ size}{2} \\rfloor\\) pixels on each side.\n\n\npadded_tensor = F.pad(avg_im, (10, 10, 10, 10))\n\nshow_image(padded_tensor, title=\"padding of 10 pixels\");\n\n\n\n\n\n\n\n\n\nStride: Stride refers to the step size or jump between consecutive applications of the convolution kernel. A stride of 1 means the kernel moves one pixel at a time, while a larger stride reduces the spatial dimensions of the output feature maps. Stride 2 is is used for reducing the image dimenetion by factor 4.Usually the no of features doubles with the stride 2 as we are reducing dimention of the input.\n\n\navg_im_s2 = traverse(avg, 2)\navg_im_s4 = traverse(avg, 4)\n\nshow_images(( avg_im, avg_im_s2, avg_im_s4), titles=(\"convolution: average stride-1\", \"convolution: average stride-2\", \"convolution: average stride-4\"), imsize=4, );\n\n\n\n\n\n\n\n\n\nDilation : involves inserting gaps or holes between the elements of the convolution kernel. This effectively increases the kernel size without changing the number of parameters, allowing the kernel to capture a larger receptive field. It help us to capture the far away pixels. Unit kernel with 1-dilation : \\(\\begin{bmatrix}\n  1 & 0 & 1 \\\\\n  0 & 0 & 0 \\\\\n  1 & 0 & 1 \\\\\n  \\end{bmatrix}\\)\n\n\ndial = tensor([[1, 0, 1],\n               [0, 0, 0],\n               [1, 0, 1]])\ndial_1 = traverse(dial)\nshow_images(( dial_1, ), titles=(\"convolution: unit dilation\",), imsize=4, );",
+    "crumbs": [
+      "CNN basics"
+    ]
+  },
+  {
+    "objectID": "cnn_basics.html#why-anns-does-not-work-well-with-images",
+    "href": "cnn_basics.html#why-anns-does-not-work-well-with-images",
+    "title": "CNN basics",
+    "section": "",
+    "text": "Lack of Spatial Awareness: Traditional artificial neural networks (ANNs) fail to capture the relationships between nearby pixels, making it challenging to localize objects within an image accurately.\nSequential Processing: ANNs process images pixel by pixel, which can lead to difficulties in understanding the overall essence of the image, especially if the image is geometrically transformed or if the pixel density varies.\n\nThe new architect should share the weights for all the pixels of the image and that need to be transmitted independently to further layer. And be invariant to transformation. The operation should be commutative, \\(F\\):convolution and \\(f\\):geomertic operation then \\(F(f(x)) = f(F(x))\\).\nIn walks the Convolution. It uses a lot of kernels which loopover all the pixel of image and do element-wise summarization.\n\nim = Image.open(path).reshape(200,200)\n\nshow_image(im, title=f'height*weight : {im.shape}');\n\n\n\n\n\n\n\n\n\nim_t = tensor(im)\nim_t.shape, im_t.dtype\n\n(torch.Size([200, 200, 3]), torch.uint8)\n\n\n\ndef apply_kernel(row, col, kernel):\n    return (im_t[row-1:row+2, col-1:col+2] * kernel).sum()\ndef traverse(kernel, stride=1):\n    rng = range(1, 199, stride)\n    return tensor([[apply_kernel(i, j, kernel) for j in rng] for i in rng])\n\n\ntop_edge = tensor([[-1, -1, -1],\n                   [0, 0, 0],\n                   [1, 1, 1]])\n\nbuttom_edge = tensor([[1, 1, 1],\n                      [0, 0, 0],\n                      [-1, -1, -1]])\n\navg = tensor([[1/9, 1/9, 1/9],\n            [1/9, 1/9, 1/9],\n            [1/9, 1/9, 1/9]])\n\n\ntop_im = traverse(top_edge)\nbuttom_im = traverse(buttom_edge)\navg_im = traverse(avg)\n\n\nshow_images((top_im, buttom_im, avg_im), titles=(\"convolution: top edge kernel\", \"convolution: buttom edge kernel\", \"convolution: average\"), imsize=4, );\n\n\n\n\n\n\n\n\nConvolution has several important properties that are crucial for its effectiveness in image processing and deep learning:\n\nKernel Size: The size of the convolution kernel is region that is considered during the convolution operation. It is typically specified as a square matrix with odd width and height (e.g., 3x3, 5x5) to ensure symmetry around the central element.\n\nKernel for average/blurr kernel : \\[\\begin{bmatrix}\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\frac{1}{9} & \\frac{1}{9} & \\frac{1}{9} \\\\\n  \\end{bmatrix}\n  \\]\n\nPadding: Padding involves adding dummy pixels (usually zeros) around the borders of the input image. This is done to maintain the spatial dimensions of the output feature maps after convolution. The amount of padding is often determined by the kernel size, with a common choice being \\(\\lfloor \\frac{kernel\\ size}{2} \\rfloor\\) pixels on each side.\n\n\npadded_tensor = F.pad(avg_im, (10, 10, 10, 10))\n\nshow_image(padded_tensor, title=\"padding of 10 pixels\");\n\n\n\n\n\n\n\n\n\nStride: Stride refers to the step size or jump between consecutive applications of the convolution kernel. A stride of 1 means the kernel moves one pixel at a time, while a larger stride reduces the spatial dimensions of the output feature maps. Stride 2 is is used for reducing the image dimenetion by factor 4.Usually the no of features doubles with the stride 2 as we are reducing dimention of the input.\n\n\navg_im_s2 = traverse(avg, 2)\navg_im_s4 = traverse(avg, 4)\n\nshow_images(( avg_im, avg_im_s2, avg_im_s4), titles=(\"convolution: average stride-1\", \"convolution: average stride-2\", \"convolution: average stride-4\"), imsize=4, );\n\n\n\n\n\n\n\n\n\nDilation : involves inserting gaps or holes between the elements of the convolution kernel. This effectively increases the kernel size without changing the number of parameters, allowing the kernel to capture a larger receptive field. It help us to capture the far away pixels. Unit kernel with 1-dilation : \\(\\begin{bmatrix}\n  1 & 0 & 1 \\\\\n  0 & 0 & 0 \\\\\n  1 & 0 & 1 \\\\\n  \\end{bmatrix}\\)\n\n\ndial = tensor([[1, 0, 1],\n               [0, 0, 0],\n               [1, 0, 1]])\ndial_1 = traverse(dial)\nshow_images(( dial_1, ), titles=(\"convolution: unit dilation\",), imsize=4, );",
+    "crumbs": [
+      "CNN basics"
+    ]
+  }
+]
