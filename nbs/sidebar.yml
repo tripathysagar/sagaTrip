@@ -2,5 +2,5 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 01_Broadcasting.ipynb
-      - 02_cnn_basics.ipynb
+      - 01_LLMForwardPass.ipynb
+      - 02_LoRAPytorch.ipynb
