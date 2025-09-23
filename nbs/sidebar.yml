@@ -4,3 +4,4 @@ website:
       - index.ipynb
       - 01_LLMForwardPass.ipynb
       - 02_LoRAPytorch.ipynb
+      - 03_DAFTSFT.ipynb
