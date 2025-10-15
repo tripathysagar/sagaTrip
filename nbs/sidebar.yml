@@ -6,3 +6,4 @@ website:
       - 02_LoRAPytorch.ipynb
       - 03_DAFTSFT.ipynb
       - 04_PythonWalkThrough.ipynb
+      - 05_GPTDecoder.ipynb
