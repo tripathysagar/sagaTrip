@@ -7,3 +7,4 @@ website:
       - 03_DAFTSFT.ipynb
       - 04_PythonWalkThrough.ipynb
       - 05_GPTDecoder.ipynb
+      - 06_MultiModal.ipynb
