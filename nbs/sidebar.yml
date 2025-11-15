@@ -9,3 +9,4 @@ website:
       - 05_GPTDecoder.ipynb
       - 06_MultiModal.ipynb
       - 07_DistilationWeightInit.ipynb
+      - 08_AgentFromFirstPrinciple.ipynb
