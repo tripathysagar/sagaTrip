@@ -16,5 +16,28 @@ website:
     search: true
   sidebar:
     style: floating
+    collapse-level: 1
+    contents:
+      - section: "🏠 Home"
+        contents:
+          - index.ipynb
+      - section: "🧠 Transformers"
+        contents:
+          - 01_LLMForwardPass.ipynb
+          - 05_GPTDecoder.ipynb
+          - 06_MultiModal.ipynb
+      - section: "🔧 Fine-Tuning"
+        contents:
+          - 02_LoRAPytorch.ipynb
+          - 03_DAFTSFT.ipynb
+          - 07_DistilationWeightInit.ipynb
+      - section: "🤖 Agents"
+        contents:
+          - 08_AgentFromFirstPrinciple.ipynb
+          - 09_KhazadDum.ipynb
+      - section: "📚 Fundamentals"
+        contents:
+          - 04_PythonWalkThrough.ipynb
+          - 10_BenchmarkingTOkenizer4Odia.ipynb
 
-metadata-files: [nbdev.yml, sidebar.yml]
+metadata-files: [nbdev.yml]
