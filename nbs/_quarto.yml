@@ -13,7 +13,33 @@ website:
   repo-actions: [issue]
   navbar:
     background: primary
+    title: false
     search: true
+    left:
+      - text: "Resume"
+        href: https://tripathysagar.github.io/resume.html
+        target: _blank
+      - text: "Blog"
+        href: index.ipynb
+      - text: "PMPP Notes"
+        href: https://tripathysagar.github.io/PMPP/
+        target: _blank
+    right:
+      - icon: envelope
+        href: mailto:tripathysagar08@gmail.com
+      - icon: linkedin
+        href: https://linkedin.com/in/sagar-tripathy
+        target: _blank
+      - icon: github
+        href: https://github.com/tripathysagar
+        target: _blank
+      - icon: youtube
+        href: https://www.youtube.com/@SimSagaTrip
+        target: _blank
+      - icon: twitter
+        href: https://x.com/tripathy_sagar0
+        target: _blank
+      - text: "📍 Open to Remote/Relocation"
   sidebar:
     style: floating
     collapse-level: 1
