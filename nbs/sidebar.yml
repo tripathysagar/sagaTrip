@@ -12,3 +12,4 @@ website:
       - 08_AgentFromFirstPrinciple.ipynb
       - 09_KhazadDum.ipynb
       - 10_BenchmarkingTOkenizer4Odia.ipynb
+      - 11_llm-arithmetic-experiments.ipynb
