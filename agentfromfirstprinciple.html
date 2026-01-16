@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Agent From First Principle – sagaTrip</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9b80f68f3e398bca18ebae74784ec24e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Agent From First Principle – sagaTrip">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://tripathysagar.github.io/sagaTrip/08_AgentFromFirstPrinciple_files/figure-html/cell-10-output-1.svg">
+<meta property="og:site_name" content="sagaTrip">
+<meta name="twitter:title" content="Agent From First Principle – sagaTrip">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://tripathysagar.github.io/sagaTrip/08_AgentFromFirstPrinciple_files/figure-html/cell-10-output-1.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/resume.html" target="_blank"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/PMPP/" target="_blank"> 
+<span class="menu-text">PMPP Notes</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:tripathysagar08@gmail.com"> <i class="bi bi-envelope" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/sagar-tripathy" target="_blank"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/tripathysagar" target="_blank"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.youtube.com/@SimSagaTrip" target="_blank"> <i class="bi bi-youtube" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://x.com/tripathy_sagar0" target="_blank"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">📍 Open to Remote/Relocation</span>
+    </span>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title">Agent From First Principle</h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">🧠 Transformers</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llmforwardpass.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Magic Behind the Curtain: How LLMs Actually Generate Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gptdecoder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multimodal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building a Multi Modal Nano-GPT from Scratch: Shakespeare Meets Fashion MNIST</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">🔧 Fine-Tuning</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lorapytorch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LoRA Explained: Fine-Tune Large Models with 90% Fewer Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./daftsft.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Domain Adaption Fine-Tuning with LoRA: My Experiment on Mac M1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distilationweightinit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CPU-Friendly Bash Generation: Distilling Qwen2.5-Coder for Local Deployment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llm-arithmetic-experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small LLMs Can’t Add—But They Can Learn to Ask</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">🤖 Agents</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./agentfromfirstprinciple.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Agent From First Principle</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./KhazadDum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Khazad Dum - Delving for Data with a Text2SQL Agent</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">📚 Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pythonwalkthrough.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python for Programmers: Fast Track to Productivity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./benchmarkingtokenizer4odia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Benchmarking LLM Tokenizers for Odia: A Comparative Study</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#building-msg" id="toc-building-msg" class="nav-link active" data-scroll-target="#building-msg">Building MSG</a></li>
+  <li><a href="#litellm-setup" id="toc-litellm-setup" class="nav-link" data-scroll-target="#litellm-setup">litellm setup</a></li>
+  <li><a href="#building-a-safe-file-search-agent" id="toc-building-a-safe-file-search-agent" class="nav-link" data-scroll-target="#building-a-safe-file-search-agent">Building a Safe File Search Agent</a>
+  <ul class="collapse">
+  <li><a href="#mock-setup-for-file-search" id="toc-mock-setup-for-file-search" class="nav-link" data-scroll-target="#mock-setup-for-file-search">Mock Setup for File Search</a></li>
+  <li><a href="#safe-run-safety-considerations" id="toc-safe-run-safety-considerations" class="nav-link" data-scroll-target="#safe-run-safety-considerations">Safe Run Safety Considerations</a></li>
+  <li><a href="#find" id="toc-find" class="nav-link" data-scroll-target="#find">Find</a></li>
+  <li><a href="#grep-files" id="toc-grep-files" class="nav-link" data-scroll-target="#grep-files">Grep files</a></li>
+  <li><a href="#list-directory" id="toc-list-directory" class="nav-link" data-scroll-target="#list-directory">List Directory</a></li>
+  <li><a href="#basic-tool-object" id="toc-basic-tool-object" class="nav-link" data-scroll-target="#basic-tool-object">Basic Tool Object</a></li>
+  <li><a href="#tool-loop" id="toc-tool-loop" class="nav-link" data-scroll-target="#tool-loop">Tool Loop</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Agent From First Principle</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>date: 2025-11-15</p>
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span>📅 15/11/2025</span>
+<p align="right">
+<a href="https://colab.research.google.com/github/tripathysagar/sagaTrip/blob/main/nbs/08_AgentFromFirstPrinciple.ipynb" target="_blank"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a>
+</p>
+</div>
+<p>In the age of LLM, there is a big explosion of autonomy populary known as Agentic systems. An agent, in the LLM context, is indeed about giving the model capabilities beyond just generating text. While an LLM can produce intelligent responses, an agent framework allows it to take actions, use tools, and interact with external systems.</p>
+<p>Think of it this way: - <strong>LLM alone</strong>: Can reason and generate text, but is isolated - <strong>LLM as an agent</strong>: Can use tools, call APIs, execute code, access databases, and take actions based on its reasoning</p>
+<p>Aim: There are many lib which tailors to various niche areas for this activity. Some are boated comes with steep learning curve. Here we are going to implement agentic system for <strong>file search agent</strong> an LLM from ground up. Our goal is to search your filesystem using tools like <code>find</code>, <code>grep</code>, and <code>ls</code>.</p>
+<pre class="text"><code>We will learn how agents work by implementing one ourself, understanding:
+- How to give LLMs access to tools
+- How to handle tool calls safely
+- How to create an agent loop that reasons and acts</code></pre>
+<p>We have to implement everything from scratch from first principle. For llm calling we will use <code>litellm</code> a thing wrapper and aggregator, <code>toolslm</code> for tool calling helper. The model to use <code>groq/openai/gpt-oss-20b</code>.</p>
+<p>In this experiment I am using Groq for LLM inferenece, any other LLM system with tool calling can be used in its place. I have already setup the api from <a href="https://console.groq.com/keys">Groq</a> and set it as env variable name <code>GROQ_API_KEY</code>. If you are useing colab add this in secret.</p>
+<div id="b6ac5d4c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lisette.core <span class="im">import</span> mk_msg</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> litellm</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"groq/openai/gpt-oss-20b"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Before we build our agent, let’s understand the foundation: how messages work in LLM systems. Every interaction is structured as messages with specific roles.</p>
+<section id="building-msg" class="level2">
+<h2 class="anchored" data-anchor-id="building-msg">Building MSG</h2>
+<div id="cd2af018" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="st">"Oh Hello There, Myself Sagar"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mk_msg(m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'role': 'user', 'content': 'Oh Hello There, Myself Sagar'}</code></pre>
+</div>
+</div>
+<p>Lets go deeper on the above output. Here there are couple of things to keep in mind. 1. <strong>Role</strong> : indicate various palyer in the a simple message. Below are fewer - <strong>user</strong> : message sent by the user, like the message one sent to the chatgpt text box - <strong>system</strong> : overall the behviour of the given system - <strong>assistant</strong> : model responses - <strong>think</strong> : special thinking for the reasoning model - <strong>tool</strong> : tool call 2. <strong>content</strong> : attributes for each field</p>
+<div id="1c2f430d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mk_msg(<span class="st">"You are a helpful math assistant"</span>, role<span class="op">=</span><span class="st">'system'</span>), mk_msg(<span class="st">"What is 5 + 3?"</span>, role<span class="op">=</span><span class="st">'user'</span>),mk_msg(<span class="st">"The answer is 8"</span>, role<span class="op">=</span><span class="st">'assistant'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>({'role': 'system', 'content': 'You are a helpful math assistant'},
+ {'role': 'user', 'content': 'What is 5 + 3?'},
+ {'role': 'assistant', 'content': 'The answer is 8'})</code></pre>
+</div>
+</div>
+<div id="9c8dda23" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>msg <span class="op">=</span> [</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    mk_msg(<span class="st">"You are a helpful math assistant"</span>, role<span class="op">=</span><span class="st">'system'</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    mk_msg(<span class="st">"What is 5 + 3?"</span>, role<span class="op">=</span><span class="st">'user'</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#mk_msg("The answer is 8", role='assistant')</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>msg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'role': 'system', 'content': 'You are a helpful math assistant'},
+ {'role': 'user', 'content': 'What is 5 + 3?'}]</code></pre>
+</div>
+</div>
+</section>
+<section id="litellm-setup" class="level2">
+<h2 class="anchored" data-anchor-id="litellm-setup">litellm setup</h2>
+<div id="f0ba797a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> litellm.completion(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model_name,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    messages<span class="op">=</span>msg,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>r.choices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[Choices(finish_reason='stop', index=0, message=Message(content='The answer is 8.', role='assistant', tool_calls=None, function_call=None, provider_specific_fields=None, reasoning='The user asks: "What is 5 + 3?" It\'s a simple arithmetic question. The answer is 8. We should respond simply.'))]</code></pre>
+</div>
+</div>
+<div id="2b68d075" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.choices[<span class="dv">0</span>].message.content)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.choices[<span class="dv">0</span>].message.role)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The answer is 8.
+assistant</code></pre>
+</div>
+</div>
+<p>Let’s break down the key parts of the response. The <code>r.choices[0].message</code> contains: - <strong>content</strong>: ‘5 + 3 = 8’ - This is the actual text response from the model - <strong>role</strong>: ‘assistant’ - This indicates the message came from the assistant (the LLM)</p>
+<p>This is exactly the format we need if we wanted to continue the conversation! We have to append this message to msg list, then add another user message, and call the API again. This is known as <strong>conversational context</strong>, the pattern would be : 1. Start with your initial messages (system + user) 1. Get the response from the LLM 1. Append that assistant message to your msg list 1. Add a new user message 1. Call the API again with the full history This way, the model “remembers” what was said before. As you noted, longer context = more tokens = more cost and processing time, but also more coherent conversations.</p>
+<div id="febfe6a4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>next_msg <span class="op">=</span> msg <span class="op">+</span> [</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    mk_msg(r.choices[<span class="dv">0</span>].message.content, role<span class="op">=</span>r.choices[<span class="dv">0</span>].message.role),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    mk_msg(<span class="st">"can you explain the resoning behind it as I am a 5 year old"</span>, role<span class="op">=</span><span class="st">"user"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>next_msg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'role': 'system', 'content': 'You are a helpful math assistant'},
+ {'role': 'user', 'content': 'What is 5 + 3?'},
+ {'role': 'assistant', 'content': 'The answer is 8.'},
+ {'role': 'user',
+  'content': 'can you explain the resoning behind it as I am a 5 year old'}]</code></pre>
+</div>
+</div>
+<div id="9e825731" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> litellm.completion(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model_name,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    messages<span class="op">=</span>next_msg,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Sure! Let’s think about it like a fun game with apples.</p>
+<ol type="1">
+<li><p><strong>Start with 5 apples.</strong><br>
+Imagine you have a bowl that already holds 5 shiny apples. Count them:<br>
+1, 2, 3, 4, 5.<br>
+So, we have <strong>5 apples</strong>.</p></li>
+<li><p><strong>Add 3 more apples.</strong><br>
+Now someone puts 3 extra apples into the same bowl.<br>
+Count the new apples:<br>
+1, 2, 3.<br>
+So, we’re adding <strong>3 apples</strong> to the bowl.</p></li>
+<li><p><strong>Count all the apples together.</strong><br>
+Put the 5 apples and the 3 new apples in one big group and count everything:<br>
+1, 2, 3, 4, 5, <strong>6, 7, 8</strong>.<br>
+That gives us <strong>8 apples</strong> in total.</p></li>
+</ol>
+<p>So, when we do “5 + 3,” we’re just putting the 5 things and the 3 things together and seeing how many we have altogether. And that number is 8. Easy peasy!</p>
+<details>
+<ul>
+<li>id: <code>chatcmpl-3c23ed54-473f-4729-bb1d-eabf3829de6f</code></li>
+<li>model: <code>openai/gpt-oss-20b</code></li>
+<li>finish_reason: <code>stop</code></li>
+<li>usage: <code>Usage(completion_tokens=376, prompt_tokens=120, total_tokens=496, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=None, audio_tokens=None, reasoning_tokens=126, rejected_prediction_tokens=None, text_tokens=None), prompt_tokens_details=None, queue_time=0.020862679, prompt_time=0.005752552, completion_time=0.370259862, total_time=0.376012414)</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>Now that we understand how LLMs handle conversations, let’s put this to work. We’ll build an agent that can actually do things - specifically, search files using command-line tools. This demonstrates how agents combine reasoning (LLM) with actions (tool execution).</p>
+</section>
+<section id="building-a-safe-file-search-agent" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-safe-file-search-agent">Building a Safe File Search Agent</h2>
+<p>An <strong>agent</strong> in the LLM context is a system that can take actions beyond just generating text. While a standard LLM can reason and respond, an agent can execute commands, use tools, and interact with external systems.</p>
+<p>In this section, we’re building a <strong>file search agent</strong> that can help users find and search through files using common bash commands like <code>find</code>, <code>grep</code>, and <code>ls</code>. This is a practical example because:</p>
+<ol type="1">
+<li><strong>Real-world utility</strong>: File searching is a common task that benefits from natural language interfaces</li>
+<li><strong>Safety-first design</strong>: We’ll implement strict safeguards to ensure read-only operations</li>
+<li><strong>Multi-tool coordination</strong>: The LLM must decide which tools to use and in what order</li>
+</ol>
+<div id="7fe78fbd" class="cell">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08_AgentFromFirstPrinciple_files/figure-html/cell-10-output-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="bbf6d952" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> toolslm.funccall <span class="im">import</span> get_schema</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastcore.xtras <span class="im">import</span> run</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="mock-setup-for-file-search" class="level3">
+<h3 class="anchored" data-anchor-id="mock-setup-for-file-search">Mock Setup for File Search</h3>
+<p>Created <code>temp_dir</code> and some dummy files to perform agent.</p>
+<div id="a6491461" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_setup():</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean up and create directories</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    os.system(<span class="st">'rm -rf temp_dir'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    os.makedirs(<span class="st">'temp_dir/subdir'</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create file1.py</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'temp_dir/file1.py'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="st">'''import numpy as np</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">from fastcore.xtras import run</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">def safe_run(cmd):</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="st">    return run(cmd)</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="st">def helper():</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="st">    pass</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span>)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create file2.py</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'temp_dir/file2.py'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="st">'''import pandas as pd</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="st">import litellm</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="st">def process_data():</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="st">    return "data"</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span>)</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create file3.py</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'temp_dir/subdir/file3.py'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="st">'''from fastcore.script import call_parse</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="st">def deep_function():</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="st">    pass</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span>)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create test.ipynb</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'temp_dir/test.ipynb'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="st">'''{</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="st"> "cells": [</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="st">  {</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a><span class="st">   "cell_type": "code",</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="st">   "source": ["import litellm</span><span class="ch">\\</span><span class="st">nprint('hello')"]</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a><span class="st"> ]</span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span>)</span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create another.ipynb</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'temp_dir/subdir/another.ipynb'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="st">'''{</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a><span class="st"> "cells": [</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="st">  {</span></span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a><span class="st">   "cell_type": "code",</span></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a><span class="st">   "source": ["def safe_run():</span><span class="ch">\\</span><span class="st">n    pass"]</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a><span class="st"> ]</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span>)</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verify</span></span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>    os.system(<span class="st">'find temp_dir -type f'</span>)</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>test_setup()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="safe-run-safety-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="safe-run-safety-considerations">Safe Run Safety Considerations</h3>
+<p>The flowchart shows our target architecture. But before implementing the tools, we must address a critical concern: security. Since our agent executes shell commands, we need strict safeguards. Our agent will perform only read operation no delete, update or execute. - <strong>Whitelist commands only</strong>: Only <code>find</code>, <code>grep</code>, and <code>ls</code> are allowed - <strong>Block dangerous characters</strong>: No pipes (<code>|</code>), semicolons (<code>;</code>), or command substitution - <strong>Read-only operations</strong>: No <code>rm</code>, <code>mv</code>, <code>cp</code>, or file modification commands - <strong>Structured arguments</strong>: Using command lists instead of shell strings to prevent injection</p>
+<div id="1465a699" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ALLOWED_COMMANDS <span class="op">=</span> {<span class="st">'find'</span>, <span class="st">'grep'</span>, <span class="st">'ls'</span>}</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>DANGEROUS_CHARS <span class="op">=</span> {<span class="st">'|'</span>, <span class="st">';'</span>, <span class="st">'&amp;'</span>, <span class="st">'&gt;'</span>, <span class="st">'&lt;'</span>, <span class="st">'`'</span>, <span class="st">'$'</span>, <span class="st">'('</span>, <span class="st">')'</span>}</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> safe_run(cmd_list):</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Safely execute only whitelisted commands"""</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> cmd_list:</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Empty command list"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cmd_list[<span class="dv">0</span>] <span class="kw">not</span> <span class="kw">in</span> ALLOWED_COMMANDS:</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Command '</span><span class="sc">{</span>cmd_list[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">' not allowed. Only </span><span class="sc">{</span>ALLOWED_COMMANDS<span class="sc">}</span><span class="ss"> permitted."</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check for shell operators</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> cmd_list:</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">any</span>(char <span class="kw">in</span> <span class="bu">str</span>(item) <span class="cf">for</span> char <span class="kw">in</span> DANGEROUS_CHARS):</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Dangerous characters detected in command"</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> run(cmd_list)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="bf13655c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 1: Using try/except</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>dangerous_tests <span class="op">=</span> [</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'rm'</span>, <span class="st">'file'</span>],           <span class="co"># Not in whitelist</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'find'</span>, <span class="st">'.'</span>, <span class="st">';'</span>, <span class="st">'rm'</span>], <span class="co"># Semicolon</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'grep'</span>, <span class="st">'test'</span>, <span class="st">'&amp;'</span>],    <span class="co"># Ampersand</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'ls'</span>, <span class="st">'-lart'</span>, <span class="st">'|'</span>, <span class="st">'wc'</span>]</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> dangerous_tests:</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        safe_run(c)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"FAILED - should have raised error"</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"PASSED - caught error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PASSED - caught error: Command 'rm' not allowed. Only {'find', 'ls', 'grep'} permitted.
+PASSED - caught error: Dangerous characters detected in command
+PASSED - caught error: Dangerous characters detected in command
+PASSED - caught error: Dangerous characters detected in command</code></pre>
+</div>
+</div>
+<div id="f05660b9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> safe_run([<span class="st">'find'</span>, <span class="st">'.'</span>, <span class="st">'-name'</span>, <span class="st">'*.ipynb'</span>]) <span class="op">!=</span> <span class="st">''</span>, <span class="st">"find should return output"</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">type</span>(safe_run([<span class="st">'ls'</span>, <span class="st">'-la'</span>])) <span class="op">==</span> <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>With safety established, let’s build the actual tools our agent will use. Each tool wraps a command-line utility with a clean Python interface.</p>
+</section>
+<section id="find" class="level3">
+<h3 class="anchored" data-anchor-id="find">Find</h3>
+<div id="51787ebd" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_files(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    directory: <span class="bu">str</span>,      <span class="co"># Starting directory (e.g., ".", "/home/user")</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    name: <span class="bu">str</span> <span class="op">=</span> <span class="st">"*"</span>,     <span class="co"># Filename pattern (e.g., "*.py", "test*")</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    file_type: <span class="bu">str</span> <span class="op">=</span> <span class="st">''</span>, <span class="co"># File type: "f" (file), "d" (dir), or None (any)</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    maxdepth: <span class="bu">int</span> <span class="op">=</span> <span class="op">-</span><span class="dv">1</span>   <span class="co"># Limit search depth for safety</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Find files matching criteria"""</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> [<span class="st">"find"</span>, directory]</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> maxdepth <span class="op">!=</span> <span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        cmd <span class="op">+=</span> [<span class="st">'-maxdepth'</span>, <span class="bu">str</span>(maxdepth)]</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> file_type <span class="op">!=</span> <span class="st">''</span>:</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        cmd <span class="op">+=</span> [<span class="st">'-type'</span>, file_type]</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">+=</span> [<span class="st">"-name"</span>, name]</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> safe_run(cmd)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (<span class="pp">IOError</span>, <span class="pp">OSError</span>) <span class="im">as</span> e:</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"Error: </span><span class="sc">{</span><span class="bu">str</span>(e)<span class="sc">}</span><span class="ss">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b1dbe2dc" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(find_files(<span class="st">'temp_dir'</span>, <span class="st">'*.py'</span>, maxdepth<span class="op">=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>temp_dir/file2.py
+temp_dir/file1.py
+temp_dir/subdir/file3.py</code></pre>
+</div>
+</div>
+</section>
+<section id="grep-files" class="level3">
+<h3 class="anchored" data-anchor-id="grep-files">Grep files</h3>
+<p><strong>For <code>grep_files</code> (grep):</strong> - <code>pattern: str</code> - What to search for - <code>file_path: str</code> - Which file to search in - <code>ignore_case: bool = False</code> - Case-insensitive? (translates to <code>-i</code>) - <code>line_numbers: bool = False</code> - Show line numbers? (translates to <code>-n</code>) - <code>show_filename: bool = True</code> - filenames to always appear for context (<code>-H</code> - Always show filename/<code>-h</code> - Never show filename)</p>
+<div id="e0da6f79" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grep_files(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    pattern: <span class="bu">str</span>,                 <span class="co">#  Pattern to search for</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    file_path: <span class="bu">str</span>,               <span class="co"># Single file to search in</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    ignore_case: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,    <span class="co"># Case-insensitive search (-i)</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    line_numbers: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,   <span class="co"># Show line numbers (-n)</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    show_filename: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>    <span class="co"># Always show filename (-H)</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Search for pattern in a single file using grep</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">    For searching multiple files, first use find_files to get the list,</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">    then call grep_files on each file separately.</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">        pattern: Text pattern to search for</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co">        file_path: Path to a single file to search (not wildcards)</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co">        ignore_case: If True, ignore case when matching</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co">        line_numbers: If True, show line numbers in output</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co">        show_filename: If True, always show filename in output</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="co">        Grep output showing matching lines</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> [<span class="st">"grep"</span>]</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ignore_case:</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>        cmd.append(<span class="st">'-i'</span>)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> line_numbers:</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>        cmd.append(<span class="st">'-n'</span>)</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> show_filename:</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>        cmd.append(<span class="st">'-H'</span>)</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>        cmd.append(<span class="st">'-h'</span>)</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">+=</span> [pattern, file_path]</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> safe_run(cmd)</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (<span class="pp">IOError</span>, <span class="pp">OSError</span>):</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># grep returns exit code 1 when no matches found</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="529538f5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grep_files(<span class="st">'import '</span>, <span class="st">'temp_dir/file2.py'</span>, line_numbers<span class="op">=</span><span class="va">True</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>temp_dir/file2.py:1:import pandas as pd
+temp_dir/file2.py:2:import litellm</code></pre>
+</div>
+</div>
+<div id="bb6e863a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grep_files(<span class="st">'import '</span>, <span class="st">'temp_dir/*'</span>, line_numbers<span class="op">=</span><span class="va">True</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code></code></pre>
+</div>
+</div>
+</section>
+<section id="list-directory" class="level3">
+<h3 class="anchored" data-anchor-id="list-directory">List Directory</h3>
+<p><strong>For <code>list_directory</code> (ls):</strong> - <code>directory: str</code> - Which directory to list - <code>show_hidden: bool = False</code> - Include hidden files? (translates to <code>-a</code>) - <code>long_format: bool = False</code> - Detailed listing? (translates to <code>-l</code>)</p>
+<div id="92c8800b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_directory(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    directory: <span class="bu">str</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    show_hidden: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    long_format: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span> :</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""List directory given a directory"""</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> [<span class="st">"ls"</span>]</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> show_hidden: cmd.append(<span class="st">'-a'</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> long_format: cmd.append(<span class="st">'-l'</span>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    cmd.append(directory)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> safe_run(cmd)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (<span class="pp">IOError</span>, <span class="pp">OSError</span>) <span class="im">as</span> e:</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"Error: </span><span class="sc">{</span><span class="bu">str</span>(e)<span class="sc">}</span><span class="ss">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="88058d54" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(list_directory(<span class="st">'temp_dir'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>file1.py
+file2.py
+subdir
+test.ipynb</code></pre>
+</div>
+</div>
+<p>We have our safe tools ready. Now comes the key part: teaching the LLM about these tools so it can decide when and how to use them. This is where tool schemas come in.</p>
+</section>
+<section id="basic-tool-object" class="level3">
+<h3 class="anchored" data-anchor-id="basic-tool-object">Basic Tool Object</h3>
+<p><strong>Tools are functions</strong> - Like <code>find_files</code>, <code>grep_files</code> and <code>list_directory</code> functions that perform actual actions.</p>
+<p><strong>The model needs to know about them</strong> - We must describe these tools to the LLM using a schema (name, description, parameters) so it knows: - What tools are available - What each tool does - What inputs each tool expects</p>
+<p><strong>This prevents confusion</strong> - Without clear descriptions, the LLM wouldn’t know it can call these tools or how to use them properly.</p>
+<p>We will use, <code>toolslm</code> uses to generate the schema automatically! The structure required for <code>Groq/OpenAI expects</code>.</p>
+<p><strong>Note</strong>: If you are using any thing other than the model <code>groq/openai/gpt-oss-20b</code> you have to tweek the tool format required for that model.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"function"</span><span class="fu">,</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"function"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"list_directory"</span><span class="fu">,</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"description"</span><span class="fu">:</span> <span class="st">"List directory given a directory</span><span class="ch">\n\n</span><span class="st">Returns:</span><span class="ch">\n</span><span class="st">- type: string"</span><span class="fu">,</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"parameters"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"object"</span><span class="fu">,</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"properties"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"directory"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"string"</span><span class="fu">,</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"description"</span><span class="fu">:</span> <span class="st">""</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>          <span class="fu">},</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"show_hidden"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"boolean"</span><span class="fu">,</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"description"</span><span class="fu">:</span> <span class="st">""</span><span class="fu">,</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"default"</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>          <span class="fu">},</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"long_format"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"boolean"</span><span class="fu">,</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"description"</span><span class="fu">:</span> <span class="st">""</span><span class="fu">,</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"default"</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"required"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"directory"</span><span class="ot">]</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4321dfb2" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_tool(func):</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"function"</span>,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"function"</span>: get_schema(func, pname<span class="op">=</span><span class="st">'parameters'</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>         }</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> [build_tool(i) <span class="cf">for</span> i <span class="kw">in</span> (list_directory, grep_files, find_files)]</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>tools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'type': 'function',
+  'function': {'name': 'list_directory',
+   'description': 'List directory given a directory\n\nReturns:\n- type: string',
+   'parameters': {'type': 'object',
+    'properties': {'directory': {'type': 'string', 'description': ''},
+     'show_hidden': {'type': 'boolean', 'description': '', 'default': False},
+     'long_format': {'type': 'boolean', 'description': '', 'default': False}},
+    'required': ['directory']}}},
+ {'type': 'function',
+  'function': {'name': 'grep_files',
+   'description': 'Search for pattern in a single file using grep\n\n    For searching multiple files, first use find_files to get the list,\n    then call grep_files on each file separately.\n\n    Args:\n        pattern: Text pattern to search for\n        file_path: Path to a single file to search (not wildcards)\n        ignore_case: If True, ignore case when matching\n        line_numbers: If True, show line numbers in output\n        show_filename: If True, always show filename in output\n\n    Returns:\n        Grep output showing matching lines\n    \n\nReturns:\n- type: string',
+   'parameters': {'type': 'object',
+    'properties': {'pattern': {'type': 'string',
+      'description': 'Pattern to search for'},
+     'file_path': {'type': 'string',
+      'description': 'Single file to search in'},
+     'ignore_case': {'type': 'boolean',
+      'description': 'Case-insensitive search (-i)',
+      'default': False},
+     'line_numbers': {'type': 'boolean',
+      'description': 'Show line numbers (-n)',
+      'default': False},
+     'show_filename': {'type': 'boolean',
+      'description': 'Always show filename (-H)',
+      'default': True}},
+    'required': ['pattern', 'file_path']}}},
+ {'type': 'function',
+  'function': {'name': 'find_files',
+   'description': 'Find files matching criteria\n\nReturns:\n- type: string',
+   'parameters': {'type': 'object',
+    'properties': {'directory': {'type': 'string',
+      'description': 'Starting directory (e.g., ".", "/home/user")'},
+     'name': {'type': 'string',
+      'description': 'Filename pattern (e.g., "*.py", "test*")',
+      'default': '*'},
+     'file_type': {'type': 'string',
+      'description': 'File type: "f" (file), "d" (dir), or None (any)',
+      'default': ''},
+     'maxdepth': {'type': 'integer',
+      'description': 'Limit search depth for safety',
+      'default': -1}},
+    'required': ['directory']}}}]</code></pre>
+</div>
+</div>
+<p>Since we are using a reasoning model that can do arithmetic on its own, need to <strong>force</strong> it to use the calculator tools.</p>
+<p>Here’s what the <code>tool_choice</code> parameter does: - <strong><code>None</code></strong> (default): Model won’t use tools at all - <strong><code>"auto"</code></strong>: Model decides whether to use tools (might skip them for simple math) - <strong><code>"required"</code></strong>: Model MUST use one of the provided tools</p>
+<p>Note : After using required, the model we are using is a Reasoning Model. There is a chance it can do the simple arithmetic without waiting for tool use stuff.</p>
+</section>
+<section id="tool-loop" class="level3">
+<h3 class="anchored" data-anchor-id="tool-loop">Tool Loop</h3>
+<div id="cfaecd59" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># llm call</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invoke(pr):</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> litellm.completion(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span>model_name,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>        messages<span class="op">=</span>pr,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>        tools<span class="op">=</span>tools,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>        tool_choice<span class="op">=</span><span class="st">"auto"</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="56c8ac95" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basic message setup</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_msg(msg):</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>        mk_msg(role<span class="op">=</span><span class="st">"system"</span>, content<span class="op">=</span><span class="st">"You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs."</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>        mk_msg(role<span class="op">=</span><span class="st">"user"</span>, content<span class="op">=</span>msg,)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> get_msg(<span class="st">'list all the files in the current directory.'</span>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>pr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'role': 'system',
+  'content': 'You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.'},
+ {'role': 'user', 'content': 'list all the files in the current directory.'}]</code></pre>
+</div>
+</div>
+<div id="b0cf35e3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> get_msg(<span class="st">'list all the files in the current directory.'</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> invoke(pr)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>res</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>🔧 list_directory({“directory”:“.”})</p>
+<details>
+<ul>
+<li>id: <code>chatcmpl-a6f7fc62-0ea0-4316-b348-9d4dfa6ee025</code></li>
+<li>model: <code>openai/gpt-oss-20b</code></li>
+<li>finish_reason: <code>tool_calls</code></li>
+<li>usage: <code>Usage(completion_tokens=35, prompt_tokens=532, total_tokens=567, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=None, audio_tokens=None, reasoning_tokens=12, rejected_prediction_tokens=None, text_tokens=None), prompt_tokens_details=None, queue_time=0.01802854, prompt_time=0.02795786, completion_time=0.034892549, total_time=0.062850409)</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="1f099611" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to check if the resp have the tool_calls</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> has_tools(res):</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">hasattr</span>(res.choices[<span class="dv">0</span>].message, <span class="st">'tool_calls'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="a6443771" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>has_tools(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>True</code></pre>
+</div>
+</div>
+<p>Extract the function from the tool object of the response.</p>
+<div id="745dfde5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> res2func_nm(res):</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">hasattr</span>(res.choices[<span class="dv">0</span>].message.tool_calls[<span class="dv">0</span>], <span class="st">'function'</span>):</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>        func_name  <span class="op">=</span> res.choices[<span class="dv">0</span>].message.tool_calls[<span class="dv">0</span>].function.name</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>        func <span class="op">=</span> <span class="bu">globals</span>().get(func_name, <span class="va">None</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> func</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>res2func_nm(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div style="max-width:800px; border: 1px solid var(--colab-border-color);"><style>
+      pre.function-repr-contents {
+        overflow-x: auto;
+        padding: 8px 12px;
+        max-height: 500px;
+      }
+
+      pre.function-repr-contents.function-repr-contents-collapsed {
+        cursor: pointer;
+        max-height: 100px;
+      }
+    </style>
+    <pre style="white-space: initial; background:
+         var(--colab-secondary-surface-color); padding: 8px 12px;
+         border-bottom: 1px solid var(--colab-border-color);"><b>list_directory</b><br>def list_directory(directory: str, show_hidden: bool=False, long_format: bool=False) -&gt; str</pre><pre class="function-repr-contents function-repr-contents-collapsed" style=""><a class="filepath" style="display:none" href="#">/tmp/ipython-input-2365635016.py</a>List directory given a directory</pre></div>
+</div>
+</div>
+<p>Extract the function kwargs from the tool object of the response.</p>
+<div id="af4be61c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_res2func_kwargs(res):</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">hasattr</span>(res.choices[<span class="dv">0</span>].message.tool_calls[<span class="dv">0</span>], <span class="st">'function'</span>):</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>        func_kwargs <span class="op">=</span> res.choices[<span class="dv">0</span>].message.tool_calls[<span class="dv">0</span>].function.arguments</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>        func_kwargs <span class="op">=</span> json.loads(func_kwargs)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> func_kwargs</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>get_res2func_kwargs(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'directory': '.'}</code></pre>
+</div>
+</div>
+<p>Now we need to add two things to your message history:</p>
+<ol type="1">
+<li><strong>The assistant’s message</strong> (with the tool_calls) - so the LLM knows what it asked for</li>
+<li><strong>The tool result</strong> - as a message with <code>role='tool'</code></li>
+</ol>
+<p>The assistant’s message: - <code>"role"</code> : <code>'assistant'</code> - <code>"content"</code> : <code>""</code> - <code>"tool_calls"</code> : <code>res.choices[0].message.tool_calls</code></p>
+<p>The tool result message needs: - <code>role</code>: <code>'tool'</code> - <code>tool_call_id</code>: The ID from the tool call - <code>content</code>: The result as a string</p>
+<div id="3d0f4d73" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_next_call(res):</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A helper function to extract new messages with tools and assitant prompt."""</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    func <span class="op">=</span> res2func_nm(res)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    func_kwargs <span class="op">=</span> get_res2func_kwargs(res)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    t_msg <span class="op">=</span> mk_msg({</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"role"</span>:<span class="st">'tool'</span>,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">'tool_call_id'</span>:res.choices[<span class="dv">0</span>].message.tool_calls[<span class="dv">0</span>].<span class="bu">id</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">'content'</span>:<span class="bu">str</span>(func(<span class="op">**</span>func_kwargs))</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    a_msg<span class="op">=</span> mk_msg({</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"role"</span>:<span class="st">'assistant'</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"content"</span>: <span class="st">""</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'tool_calls'</span>: res.choices[<span class="dv">0</span>].message.tool_calls</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [ a_msg, t_msg]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="002cac2b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> next_msg(pr, res):</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""extracting and appending the new prompts from `res` i.e for tool and assiant to the original prompt `pr` """</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pr <span class="op">+</span> build_next_call(res)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>pr_ <span class="op">=</span> next_msg(pr, res)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>pr_</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'role': 'system',
+  'content': 'You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.'},
+ {'role': 'user', 'content': 'list all the files in the current directory.'},
+ {'role': 'assistant',
+  'content': '',
+  'tool_calls': [ChatCompletionMessageToolCall(function=Function(arguments='{"directory":"."}', name='list_directory'), id='fc_a63bcd76-0a4c-4a1a-a880-894fbcd464db', type='function')]},
+ {'role': 'tool',
+  'tool_call_id': 'fc_a63bcd76-0a4c-4a1a-a880-894fbcd464db',
+  'content': 'sample_data\ntemp_dir'}]</code></pre>
+</div>
+</div>
+<div id="46ad0dc8" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> get_msg(<span class="st">'list all the files in the current directory.'</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> invoke(pr)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>res</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>🔧 list_directory({“directory”:“.”})</p>
+<details>
+<ul>
+<li>id: <code>chatcmpl-950fe2b9-7e08-424d-ba34-183d566f7aa0</code></li>
+<li>model: <code>openai/gpt-oss-20b</code></li>
+<li>finish_reason: <code>tool_calls</code></li>
+<li>usage: <code>Usage(completion_tokens=31, prompt_tokens=532, total_tokens=563, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=None, audio_tokens=None, reasoning_tokens=8, rejected_prediction_tokens=None, text_tokens=None), prompt_tokens_details=None, queue_time=0.017648798, prompt_time=0.030200318, completion_time=0.030406804, total_time=0.060607122)</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="db0abb45" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> has_tools(res):</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    func_nm, func_kwargs <span class="op">=</span> res2func_nm(res), get_res2func_kwargs(res)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>func_nm, func_kwargs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>(&lt;function __main__.list_directory(directory: str, show_hidden: bool = False, long_format: bool = False) -&gt; str&gt;,
+ {'directory': '.'})</code></pre>
+</div>
+</div>
+<div id="2913890f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>res_ <span class="op">=</span> invoke(pr_)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>res_</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The current directory contains:</p>
+<ul>
+<li><code>sample_data</code></li>
+<li><code>temp_dir</code></li>
+</ul>
+<details>
+<ul>
+<li>id: <code>chatcmpl-2925729f-ea58-4708-8977-406fd029e125</code></li>
+<li>model: <code>openai/gpt-oss-20b</code></li>
+<li>finish_reason: <code>stop</code></li>
+<li>usage: <code>Usage(completion_tokens=53, prompt_tokens=561, total_tokens=614, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=None, audio_tokens=None, reasoning_tokens=29, rejected_prediction_tokens=None, text_tokens=None), prompt_tokens_details=None, queue_time=0.020229679, prompt_time=0.029933307, completion_time=0.051773638, total_time=0.081706945)</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>The model returns <code>finish_reason</code> as <code>stop</code> for stopping the exexcution.</p>
+<div id="5e0962ba" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>res_.choices[<span class="dv">0</span>].finish_reason</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>'stop'</code></pre>
+</div>
+</div>
+<p>The LLM now knows our tools exist. The final piece is the agent loop: repeatedly calling the LLM, executing its requested tools, and feeding back results until the task completes.</p>
+<div id="5d7dc77d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tool_loop(pr, max_steps<span class="op">=</span><span class="dv">10</span>, debug<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Execute agentic loop: LLM calls tools until task is complete"""</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Display initial messages</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">### Initial Messages:"</span>)</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> msg <span class="kw">in</span> pr:</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>        role <span class="op">=</span> msg[<span class="st">'role'</span>]</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>        content <span class="op">=</span> msg.get(<span class="st">'content'</span>, <span class="st">'[tool_call]'</span>)</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"**</span><span class="sc">{</span>role<span class="sc">}</span><span class="ss">**: </span><span class="sc">{</span>content<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(max_steps):</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span><span class="st">'='</span><span class="op">*</span><span class="dv">20</span><span class="sc">}</span><span class="ss"> Step </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'='</span><span class="op">*</span><span class="dv">20</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>        res <span class="op">=</span> invoke(pr)</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Debug: show full response</span></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> debug:</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">**Debug - Full Response:**"</span>)</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>            pprint(res.choices[<span class="dv">0</span>].message.model_dump())</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check if done</span></span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> has_tools(res) <span class="kw">or</span> res.choices[<span class="dv">0</span>].finish_reason <span class="op">==</span> <span class="st">'stop'</span>:</span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">✓ Complete! Final response:</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a>            content <span class="op">=</span> res.choices[<span class="dv">0</span>].message.content</span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> content:</span>
+<span id="cb55-28"><a href="#cb55-28" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(content)</span>
+<span id="cb55-29"><a href="#cb55-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> res</span>
+<span id="cb55-30"><a href="#cb55-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-31"><a href="#cb55-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract and execute tool</span></span>
+<span id="cb55-32"><a href="#cb55-32" aria-hidden="true" tabindex="-1"></a>        func <span class="op">=</span> res2func_nm(res)</span>
+<span id="cb55-33"><a href="#cb55-33" aria-hidden="true" tabindex="-1"></a>        func_kwargs <span class="op">=</span> get_res2func_kwargs(res)</span>
+<span id="cb55-34"><a href="#cb55-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-35"><a href="#cb55-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"🔧 Tool: </span><span class="sc">{</span>func<span class="sc">.</span><span class="va">__name__</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-36"><a href="#cb55-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"   Args: </span><span class="sc">{</span>func_kwargs<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-37"><a href="#cb55-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-38"><a href="#cb55-38" aria-hidden="true" tabindex="-1"></a>        pr <span class="op">=</span> next_msg(pr, res)</span>
+<span id="cb55-39"><a href="#cb55-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-40"><a href="#cb55-40" aria-hidden="true" tabindex="-1"></a>        result_preview <span class="op">=</span> pr[<span class="op">-</span><span class="dv">1</span>][<span class="st">'content'</span>][:<span class="dv">200</span>]</span>
+<span id="cb55-41"><a href="#cb55-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"   Result: </span><span class="sc">{</span>result_preview<span class="sc">}{</span><span class="st">'...'</span> <span class="cf">if</span> <span class="bu">len</span>(pr[<span class="op">-</span><span class="dv">1</span>][<span class="st">'content'</span>]) <span class="op">&gt;</span> <span class="dv">200</span> <span class="cf">else</span> <span class="st">''</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-42"><a href="#cb55-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-43"><a href="#cb55-43" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">⚠️ Max steps (</span><span class="sc">{</span>max_steps<span class="sc">}</span><span class="ss">) reached!"</span>)</span>
+<span id="cb55-44"><a href="#cb55-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="bb3eed2b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> get_msg(<span class="st">'list all the files in the "temp_dir" directory.'</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tool_loop(pr, debug<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Initial Messages:
+**system**: You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.
+**user**: list all the files in the "temp_dir" directory.
+
+==================== Step 0 ====================
+
+**Debug - Full Response:**
+{'content': None,
+ 'function_call': None,
+ 'reasoning': "User wants to list all files in temp_dir directory. We'll call "
+              'list_directory.',
+ 'role': 'assistant',
+ 'tool_calls': [{'function': {'arguments': '{"directory":"temp_dir","long_format":false,"show_hidden":false}',
+                              'name': 'list_directory'},
+                 'id': 'fc_f10ea2ae-a331-492e-a9df-b245850dffa4',
+                 'type': 'function'}]}
+🔧 Tool: list_directory
+   Args: {'directory': 'temp_dir', 'long_format': False, 'show_hidden': False}
+   Result: file1.py
+file2.py
+subdir
+test.ipynb
+
+==================== Step 1 ====================
+
+**Debug - Full Response:**
+{'content': '**Contents of `temp_dir`:**\n'
+            '\n'
+            '- `file1.py`  \n'
+            '- `file2.py`  \n'
+            '- `subdir`  \n'
+            '- `test.ipynb`',
+ 'function_call': None,
+ 'reasoning': 'The user requested: "list all the files in the "temp_dir" '
+              'directory." We have list_directory output: file1.py, file2.py, '
+              'subdir, test.ipynb. The output is correct. Should provide as '
+              'answer.',
+ 'role': 'assistant',
+ 'tool_calls': None}
+
+✓ Complete! Final response:
+
+**Contents of `temp_dir`:**
+
+- `file1.py`  
+- `file2.py`  
+- `subdir`  
+- `test.ipynb`</code></pre>
+</div>
+</div>
+<div id="503df821" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> get_msg(<span class="st">"Search for all .ipynb files in temp_dir, but only go 2 levels deep"</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tool_loop(pr, max_steps<span class="op">=</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Initial Messages:
+**system**: You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.
+**user**: Search for all .ipynb files in temp_dir, but only go 2 levels deep
+
+==================== Step 0 ====================
+🔧 Tool: find_files
+   Args: {'directory': 'temp_dir', 'file_type': 'f', 'maxdepth': 2, 'name': '*.ipynb'}
+   Result: temp_dir/subdir/another.ipynb
+temp_dir/test.ipynb
+
+==================== Step 1 ====================
+
+✓ Complete! Final response:
+
+Here are the `.ipynb` files found in `temp_dir` (search depth limited to 2 levels):
+
+- `temp_dir/test.ipynb`  
+- `temp_dir/subdir/another.ipynb`</code></pre>
+</div>
+</div>
+<div id="1805f506" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple tests</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>test_prompts <span class="op">=</span> [</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Find files</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Find all Python files in temp_dir"</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Search for all .ipynb files in temp_dir, but only go 2 levels deep"</span>,</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Find all directories in temp_dir"</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Grep tests</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Search for the word 'import' in the file temp_dir/file1.py"</span>,</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Find all lines containing 'litellm' in temp_dir/test.ipynb"</span>,</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Multi-tool tests</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Find all Python files in temp_dir and then search for 'def safe_run' in them"</span>,</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Look for all .py files in temp_dir and tell me which ones contain the word 'fastcore'"</span>,</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="54645673" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>test_prompts[::<span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>['Find all Python files in temp_dir',
+ "Search for the word 'import' in the file temp_dir/file1.py",
+ "Look for all .py files in temp_dir and tell me which ones contain the word 'fastcore'"]</code></pre>
+</div>
+</div>
+<p>I am just calling the tool for 3 prompts. As I am using free tier for service. It might fail with the rate limiting error, please wait and retry. The llm might give wrong ans like not searching a directory(due to the non deterministic nature of the model inference). There is an awsome blog from <a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/">Thinking Machine Lab</a> for this specific behaviour.</p>
+<div id="2e35010f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> test_prompts[::<span class="dv">3</span>]:</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>    pr <span class="op">=</span> get_msg(i)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> tool_loop(pr, max_steps<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>    pprint(<span class="st">"***"</span> <span class="op">*</span> <span class="dv">35</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Initial Messages:
+**system**: You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.
+**user**: Find all Python files in temp_dir
+
+==================== Step 0 ====================
+🔧 Tool: find_files
+   Args: {'directory': 'temp_dir', 'file_type': 'f', 'name': '*.py'}
+   Result: temp_dir/file2.py
+temp_dir/file1.py
+temp_dir/subdir/file3.py
+
+==================== Step 1 ====================
+
+✓ Complete! Final response:
+
+Here are all the Python files located under `temp_dir`:
+
+```
+temp_dir/file2.py
+temp_dir/file1.py
+temp_dir/subdir/file3.py
+```
+
+Let me know if you’d like to inspect any of these files or search inside them!
+'*********************************************************************************************************'
+
+### Initial Messages:
+**system**: You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.
+**user**: Search for the word 'import' in the file temp_dir/file1.py
+
+==================== Step 0 ====================
+🔧 Tool: grep_files
+   Args: {'file_path': 'temp_dir/file1.py', 'ignore_case': False, 'line_numbers': False, 'pattern': 'import', 'show_filename': True}
+   Result: temp_dir/file1.py:import numpy as np
+temp_dir/file1.py:from fastcore.xtras import run
+
+==================== Step 1 ====================
+
+✓ Complete! Final response:
+
+**Search results for the word “import” in `temp_dir/file1.py`:**
+
+```
+temp_dir/file1.py:import numpy as np
+temp_dir/file1.py:from fastcore.xtras import run
+```
+
+These are the only lines in the file that contain the word `import`.
+'*********************************************************************************************************'
+
+### Initial Messages:
+**system**: You help users find and search files safely using command-line tools. Use find_files for locating files, grep_files for searching content, and list_directory for browsing. Provide clear, accurate results based only on tool outputs.
+**user**: Look for all .py files in temp_dir and tell me which ones contain the word 'fastcore'
+
+==================== Step 0 ====================
+🔧 Tool: find_files
+   Args: {'directory': 'temp_dir', 'file_type': '', 'maxdepth': -1, 'name': '*.py'}
+   Result: temp_dir/file2.py
+temp_dir/file1.py
+temp_dir/subdir/file3.py
+
+==================== Step 1 ====================
+🔧 Tool: grep_files
+   Args: {'file_path': 'temp_dir/file1.py', 'ignore_case': False, 'line_numbers': False, 'pattern': 'fastcore', 'show_filename': True}
+   Result: temp_dir/file1.py:from fastcore.xtras import run
+
+==================== Step 2 ====================
+🔧 Tool: grep_files
+   Args: {'file_path': 'temp_dir/file2.py', 'ignore_case': False, 'line_numbers': False, 'pattern': 'fastcore', 'show_filename': True}
+   Result: 
+
+==================== Step 3 ====================
+🔧 Tool: grep_files
+   Args: {'file_path': 'temp_dir/subdir/file3.py', 'ignore_case': False, 'line_numbers': False, 'pattern': 'fastcore', 'show_filename': True}
+   Result: temp_dir/subdir/file3.py:from fastcore.script import call_parse
+
+==================== Step 4 ====================
+
+✓ Complete! Final response:
+
+Here are the `.py` files in `temp_dir` that contain the word **`fastcore`**:
+
+| File | Line(s) that match |
+|------|--------------------|
+| `temp_dir/file1.py` | `from fastcore.xtras import run` |
+| `temp_dir/subdir/file3.py` | `from fastcore.script import call_parse` |
+
+`temp_dir/file2.py` does **not** contain the word `fastcore`.
+'*********************************************************************************************************'</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>We’ve built a complete file search agent from scratch, demystifying how LLM agents actually work under the hood. Starting with simple message structures, we progressed through safe tool design, schema generation, and finally implemented a full agent loop that reasons and acts.</p>
+<p><strong>Key takeaways:</strong></p>
+<ul>
+<li><strong>Agents = LLM reasoning + tool execution</strong> - The model decides <em>what</em> to do, your code provides the <em>how</em></li>
+<li><strong>Safety first</strong> - Whitelisting commands and validating inputs is crucial when executing system commands</li>
+<li><strong>The agent loop is simple</strong> - It’s just: call LLM → execute tools → feed back results → repeat until done</li>
+<li><strong>Tool schemas bridge the gap</strong> - They teach the LLM what capabilities it has available</li>
+</ul>
+<p>This foundation extends far beyond file search. The same patterns work for: - Database agents that query and analyze data - Web automation agents using Playwright or Selenium<br>
+- API integration agents that coordinate multiple services - Code execution agents for data science workflows and many more</p>
+<p>By building from first principle, we understand exactly what’s happening at each step, making debugging easier and giving us full control over safety, costs, and behavior.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/tripathysagar\.github\.io\/sagaTrip");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

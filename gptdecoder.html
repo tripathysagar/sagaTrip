@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation – sagaTrip</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9b80f68f3e398bca18ebae74784ec24e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation – sagaTrip">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://tripathysagar.github.io/sagaTrip/05_GPTDecoder_files/figure-html/cell-2-output-1.png">
+<meta property="og:site_name" content="sagaTrip">
+<meta property="og:image:height" content="790">
+<meta property="og:image:width" content="1184">
+<meta name="twitter:title" content="Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation – sagaTrip">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://tripathysagar.github.io/sagaTrip/05_GPTDecoder_files/figure-html/cell-2-output-1.png">
+<meta name="twitter:image-height" content="790">
+<meta name="twitter:image-width" content="1184">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/resume.html" target="_blank"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/PMPP/" target="_blank"> 
+<span class="menu-text">PMPP Notes</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:tripathysagar08@gmail.com"> <i class="bi bi-envelope" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/sagar-tripathy" target="_blank"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/tripathysagar" target="_blank"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.youtube.com/@SimSagaTrip" target="_blank"> <i class="bi bi-youtube" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://x.com/tripathy_sagar0" target="_blank"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">📍 Open to Remote/Relocation</span>
+    </span>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title">Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation</h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">🧠 Transformers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llmforwardpass.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Magic Behind the Curtain: How LLMs Actually Generate Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gptdecoder.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multimodal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building a Multi Modal Nano-GPT from Scratch: Shakespeare Meets Fashion MNIST</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">🔧 Fine-Tuning</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lorapytorch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LoRA Explained: Fine-Tune Large Models with 90% Fewer Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./daftsft.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Domain Adaption Fine-Tuning with LoRA: My Experiment on Mac M1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distilationweightinit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CPU-Friendly Bash Generation: Distilling Qwen2.5-Coder for Local Deployment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llm-arithmetic-experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small LLMs Can’t Add—But They Can Learn to Ask</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">🤖 Agents</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./agentfromfirstprinciple.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Agent From First Principle</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./KhazadDum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Khazad Dum - Delving for Data with a Text2SQL Agent</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">📚 Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pythonwalkthrough.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python for Programmers: Fast Track to Productivity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./benchmarkingtokenizer4odia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Benchmarking LLM Tokenizers for Odia: A Comparative Study</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-motivation" id="toc-introduction-motivation" class="nav-link active" data-scroll-target="#introduction-motivation">Introduction &amp; Motivation</a></li>
+  <li><a href="#dataset-preprocessing" id="toc-dataset-preprocessing" class="nav-link" data-scroll-target="#dataset-preprocessing">Dataset &amp; Preprocessing</a></li>
+  <li><a href="#tokenization" id="toc-tokenization" class="nav-link" data-scroll-target="#tokenization">Tokenization</a></li>
+  <li><a href="#embedding" id="toc-embedding" class="nav-link" data-scroll-target="#embedding">Embedding</a>
+  <ul class="collapse">
+  <li><a href="#token-embeddings" id="toc-token-embeddings" class="nav-link" data-scroll-target="#token-embeddings">Token Embeddings</a></li>
+  <li><a href="#positional-embeddings" id="toc-positional-embeddings" class="nav-link" data-scroll-target="#positional-embeddings">Positional Embeddings</a></li>
+  </ul></li>
+  <li><a href="#causal-self-attention" id="toc-causal-self-attention" class="nav-link" data-scroll-target="#causal-self-attention">Causal Self Attention</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention">Multi-head attention</a></li>
+  <li><a href="#feed-forward-network" id="toc-feed-forward-network" class="nav-link" data-scroll-target="#feed-forward-network">Feed-forward network</a></li>
+  <li><a href="#language-head" id="toc-language-head" class="nav-link" data-scroll-target="#language-head">Language Head</a></li>
+  <li><a href="#complete-model" id="toc-complete-model" class="nav-link" data-scroll-target="#complete-model">Complete model:</a></li>
+  <li><a href="#now-comes-the-fun-partteaching-our-model-to-actually-speak-shakespeare" id="toc-now-comes-the-fun-partteaching-our-model-to-actually-speak-shakespeare" class="nav-link" data-scroll-target="#now-comes-the-fun-partteaching-our-model-to-actually-speak-shakespeare">Now comes the fun part—teaching our model to actually speak Shakespeare!</a></li>
+  <li><a href="#generation-inference" id="toc-generation-inference" class="nav-link" data-scroll-target="#generation-inference">Generation (Inference)</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>date: 2025-10-15</p>
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span>📅 15/10/2025</span>
+<p align="right">
+<a href="https://colab.research.google.com/github/tripathysagar/NanoTransformer/blob/main/nbs/01_GPTText2Text.ipynb" target="_blank"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a>
+</p>
+</div>
+<section id="introduction-motivation" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-motivation">Introduction &amp; Motivation</h2>
+<p><strong>Aim</strong>: This blog documents the implementation of a Transformer architecture, focusing on the pretraining process that is critical and foundational to all LLMs. We use Shakespeare’s text as our dataset, keeping the setup lightweight enough to run on a single GPU in Google Colab’s free tier.</p>
+<p><strong>Transformers</strong>: These are the neural network architecture powering modern language models. Originally introduced in the paper <em>“Attention is All You Need”</em> (Vaswani et al., 2017), transformers have become the foundation for models like GPT, BERT, and beyond.</p>
+<p><strong>Note on Scope:</strong> This blog focuses exclusively on the <strong>pre-training</strong> phase of language models—teaching a transformer to predict the next character in a sequence. It does not covers the additional steps that make models like ChatGPT conversational and helpful, such as:</p>
+<ul>
+<li>Supervised Fine-Tuning (SFT) - teaching the model to follow instructions</li>
+<li>Reinforcement Learning from Human Feedback (RLHF) - aligning the model with human preferences</li>
+</ul>
+<p>Think of this as “GPT” without the “Chat”—we’re building the foundational language understanding, which is the critical first step that all modern LLMs go through.</p>
+</section>
+<section id="dataset-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-preprocessing">Dataset &amp; Preprocessing</h2>
+<p>A language model learns the joint probability distribution of words in a sentence—which is just a fancy way of saying it learns to predict the next word. For this step, big labs scrape massive amounts of text from the web and feed it to their models to learn from. There are big dataset like <em>FineWeb edu</em> or <em>common crawl</em> data. As I am extremely GPU poor, we will consider the Shakespeare dataset i.e.&nbsp;some of the literature he produced. The data set is taken from the legendary <em>Karpathy’s Nanogpt</em> series. In fact this blog is a technical write up for the educational <a href="https://www.youtube.com/watch?v=VMj-3S1tku0&amp;list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ">Zero to hero</a> created by him.</p>
+<p>The dataset consists of a giant text file, a big file dump. With all the text concatenated. Shakespeare dataset has about 1.1 million characters and 200k words—a nice manageable size for a toy transformer!</p>
+<p>The dataset is devided by <code>90:10</code> ratio for training and valid respectively. Below is a example of dataset creation.</p>
+<div id="0c40935a" class="cell">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_GPTDecoder_files/figure-html/cell-2-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For the string “Hello”, here’s how the autoregressive training creates examples:</p>
+<p><strong>Independent variable (Input/Context)</strong>: The sequence of characters seen so far <strong>Dependent variable (Target/Output)</strong>: The next character to predict</p>
+<p>Lets consider examples from “Hello” which generates 4 training sample :</p>
+<ol type="1">
+<li>Input: “H” → Target: “e”</li>
+<li>Input: “He” → Target: “l”<br>
+</li>
+<li>Input: “Hel” → Target: “l”</li>
+<li>Input: “Hell” → Target: “o”</li>
+</ol>
+<p>Each example uses the previous characters (independent variable) to predict the next one (dependent variable).</p>
+</section>
+<section id="tokenization" class="level2">
+<h2 class="anchored" data-anchor-id="tokenization">Tokenization</h2>
+<p>Any process involving languages goes through the <strong>Tokenization</strong> step. It’s basically the art of breaking text into smaller chunks that the model can work with. There are many ways to achieve this:</p>
+<ul>
+<li><strong>Character-level</strong>: Split into individual characters</li>
+<li><strong>Word-level</strong>: Split by words</li>
+<li><strong>Subword-level</strong>: Split into meaningful chunks (BPE, WordPiece, etc.)</li>
+<li><strong>Byte-level</strong>: Split into bytes (used in GPT-2)</li>
+</ul>
+<p>This implementation used <strong>Character-level</strong>. By using character-level tokenization, we keep things simple and lightweight. Since we’re modeling at the character level, the <strong>vocab</strong> (vocabulary—the set of all possible tokens our model knows about) of our model is all the unique chars present in the text. There are around 65 unique chars in the dataset. Reasons for choosing this approach: simpler to implement, good for learning, and Shakespeare has a manageable vocab size.</p>
+</section>
+<section id="embedding" class="level2">
+<h2 class="anchored" data-anchor-id="embedding">Embedding</h2>
+<section id="token-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="token-embeddings">Token Embeddings</h3>
+<p>Embeddings are the individual vector representations we learn for each token in our vocabulary. This converts each token (character, in our case) into a multi-dimensional vector—typically something like 64, 128, or 512 numbers—that captures relationships between tokens. The model learns these vectors during training. Larger embedding dimensions lead to stronger learning of these patterns. For example, ‘a’ and ‘e’ might be used in similar contexts (both are vowels), so their embeddings become similar. These embeddings start as random numbers, and through training, the model gradually adjusts them to find optimal values that capture meaningful patterns. For the given itration of the expreiment, embedding dimensions is set to <code>128</code>.</p>
+<p><img src="./static/blog5/token_embeddings.png" class="img-fluid"></p>
+</section>
+<section id="positional-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="positional-embeddings">Positional Embeddings</h3>
+<p>Once a sentence is converted to a list of tokens, these tokens are position invariant i.e.&nbsp;are not aware what comes after what. positional embedding helps us in learning that. The positional embedding matrix has dimensions <em>seq_len</em> × <em>embedding_dim</em>, where each position gets its own vector that’s added to the token embedding. The sequence length (also called context length) is the window of text the model can ‘remember’ at once when predicting the next character. There are two main approaches: - Learned positional embeddings: Start random and are trained alongside the model (used in GPT) - Fixed sinusoidal embeddings: Use sine/cosine functions, not trainable (original Transformer paper)</p>
+<p>We use learned positional embeddings—these start as random values and get optimized during training, just like the token embeddings. The context length is set to <code>128</code>. The input to the model <code>input = token_embedding + positional_embedding</code>. We add them (rather than concatenate) so the input stays compact and the model learns to blend what and where information together.</p>
+<p><img src="./static/blog5/postional_encoding.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./static/blog5/input2attn.png" class="img-fluid figure-img"></p>
+<figcaption>Input to attention block.</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="causal-self-attention" class="level2">
+<h2 class="anchored" data-anchor-id="causal-self-attention">Causal Self Attention</h2>
+<p><strong>Attention</strong>: After embedding the inputs, the model needs to learn which previous tokens are most relevant for predicting the next one. For example, in ’Hello, my name is S____’, the model should pay attention to the broader context, not just the immediate previous character. The mechanism for building attention is to project the input into three different representations: <strong>Key (K)</strong>, <strong>Query (Q)</strong>, and <strong>Value (V)</strong>. These are learned linear projections (just matrix multiplications that the model learns) of the input—in our case. While our embeddings are 128 dimensions, we project Q, K, V down to 16 dimensions each for this attention head. Below is a mental model for the idea behind them with respect to databases:</p>
+<ol type="1">
+<li><strong>Key (K)</strong>: Index or primary key of a table</li>
+<li><strong>Query (Q)</strong>: User asking questions</li>
+<li><strong>Value (V)</strong>: Answer to the user’s query</li>
+</ol>
+<div id="bcb2bed2-2381-4d7b-9405-201fe78eaa77" class="cell">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_GPTDecoder_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Just like a database query finds relevant records, the Query helps find which tokens in our sequence are most relevant to the current position. The model compares each Query against all Keys to compute attention scores, which determine how much each token should attend to every other token. These scores are then used to create a weighted sum of the Values.</p>
+<div id="7f6e784a" class="cell">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_GPTDecoder_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttentionHead(nn.Module):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config:GPTConfig):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> config.embedding_dim <span class="op">%</span> config.n_heads <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> config.embedding_dim <span class="op">//</span> config.n_heads</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.Q_W <span class="op">=</span> nn.Linear(config.embedding_dim, <span class="va">self</span>.head_dim)       <span class="co"># weight of Q</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.K_W <span class="op">=</span> nn.Linear(config.embedding_dim, <span class="va">self</span>.head_dim)       <span class="co"># weight of K</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.V_W <span class="op">=</span> nn.Linear(config.embedding_dim, <span class="va">self</span>.head_dim)       <span class="co"># weight of V</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        mask <span class="op">=</span> torch.tril(torch.ones(config.seq_len, config.seq_len))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.register_buffer(<span class="st">'mask'</span>, mask.masked_fill(mask <span class="op">==</span> <span class="dv">0</span>, <span class="bu">float</span>(<span class="st">'-inf'</span>))) <span class="co"># for building Causal mask</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(p <span class="op">=</span> config.dropout)                    <span class="co"># randomly switching off some logits</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x): <span class="co">#bs * seq_len * embedding_dim</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        Q, K, V <span class="op">=</span> <span class="va">self</span>.Q_W(x), <span class="va">self</span>.K_W(x), <span class="va">self</span>.V_W(x)                <span class="co">#bs * seq_len * head_dim</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        attn <span class="op">=</span> Q <span class="op">@</span> K.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>) <span class="op">/</span>  <span class="va">self</span>.head_dim <span class="op">**</span> <span class="fl">0.5</span>         <span class="co">#bs * seq_len * head_dim @ bs * head_dim * seq_len -&gt; bs * seq_len * seq_len</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        attn <span class="op">+=</span> <span class="va">self</span>.mask[:x.shape[<span class="dv">1</span>], :x.shape[<span class="dv">1</span>]]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        attn <span class="op">=</span> torch.softmax(attn, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(attn <span class="op">@</span> V)                                  <span class="co"># bs * seq_len * seq_len @ bs * seq_len * head_dim -&gt; bs * seq_len *  head_dim</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="multi-head-attention" class="level2">
+<h2 class="anchored" data-anchor-id="multi-head-attention">Multi-head attention</h2>
+<p>A multi-head attention block runs multiple attention heads in parallel. Here’s what multi-head attention typically achieves: - <strong>Diversity</strong>: Each head can learn to attend to different patterns (one might focus on nearby characters, another on longer-range dependencies) - <strong>Richer representation</strong>: Combining multiple heads gives a more complete picture than a single attention mechanism</p>
+<p>The outputs of all attention heads are concatenated together. Since each head outputs 16 dimensions and we have 8 heads, the concatenated result is back to our original 128 dimensions (8 × 16 = 128). This combined output is then fed through a final linear layer to mix the information from all the different attention perspectives. In the current setup, the number of heads is <strong>8</strong> (embedding_dim / head_dim = 128/16).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./static/blog5/MHA.png" class="img-fluid figure-img"></p>
+<figcaption>Multi Attention Head.</figcaption>
+</figure>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config:GPTConfig):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> config.embedding_dim <span class="op">%</span> config.n_heads <span class="op">==</span> <span class="dv">0</span> <span class="co"># config.n_heads * output of the embedding layer</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.heads <span class="op">=</span> nn.ModuleList([AttentionHead(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.n_heads)])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(p<span class="op">=</span>config.dropout)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear <span class="op">=</span> nn.Linear(config.embedding_dim, config.embedding_dim)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm <span class="op">=</span> nn.LayerNorm(config.embedding_dim)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x): <span class="co">#bs * seq_len * embedding_dim</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        head <span class="op">=</span> torch.cat([head(x) <span class="cf">for</span> head <span class="kw">in</span> <span class="va">self</span>.heads], dim<span class="op">=-</span><span class="dv">1</span>) <span class="co">#bs * seq_len * embedding_dim</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        head <span class="op">=</span> <span class="va">self</span>.dropout(<span class="va">self</span>.linear(head))                     <span class="co">#bs * seq_len * embedding_dim</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.layer_norm(head <span class="op">+</span> x)                           <span class="co">#residual connections</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note: 1. <strong>LayerNorm</strong>: A normalization technique that normalizes activations across the feature dimension, stabilizing training and helping gradients flow better. 1. <strong>Resblock</strong>: allow gradients to flow directly backward through the network, which is crucial for training deep models. Without them, gradients can vanish during backpropagation.</p>
+</section>
+<section id="feed-forward-network" class="level2">
+<h2 class="anchored" data-anchor-id="feed-forward-network">Feed-forward network</h2>
+<p>The output from multi-head attention is passed through a feed-forward network. After attention determines <em>which</em> tokens are relevant, the FFN processes and transforms that information at each position independently.</p>
+<p>The FFN typically: - <strong>Expands</strong> the representation to a larger dimension (e.g., 128 → 512), giving the model more capacity to learn complex patterns - Applies a <strong>non-linear activation</strong> function (like GELU or ReLU) to capture non-linear relationships. Which is a key aspect of any <strong>Nural network</strong>. - <strong>Projects back</strong> to the original dimension (512 → 128). The output is of dim embedding_dim.</p>
+<p>This expansion and contraction, combined with the non-linearity, allows the model to learn richer transformations of the attended features.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FFN(nn.Module):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config:GPTConfig):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(p<span class="op">=</span>config.dropout)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear1 <span class="op">=</span> nn.Linear(config.embedding_dim, <span class="dv">4</span> <span class="op">*</span> config.embedding_dim)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear2 <span class="op">=</span> nn.Linear(<span class="dv">4</span> <span class="op">*</span>config.embedding_dim, config.embedding_dim)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm <span class="op">=</span> nn.LayerNorm(config.embedding_dim)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gelu <span class="op">=</span> nn.GELU(approximate<span class="op">=</span><span class="st">'tanh'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x): <span class="co">#bs * seq_len * embedding_dim</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        pred <span class="op">=</span> <span class="va">self</span>.linear2(<span class="va">self</span>.gelu(<span class="va">self</span>.linear1(x)))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.layer_norm(<span class="va">self</span>.dropout(pred) <span class="op">+</span> x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The transformer architecture is built by stacking multiple layers of these MHA → FFN blocks. Each layer (or “transformer block”) gets progressively better at understanding the input. Below is a rough struct.</p>
+<ul>
+<li>Input → Embedding</li>
+<li>Transformer Block 1 (MHA → FFN)</li>
+<li>Transformer Block 2 (MHA → FFN)</li>
+<li>Transformer Block 3 (MHA → FFN)</li>
+<li>… (repeat N times)</li>
+<li>Final output layer</li>
+</ul>
+<p>More depth allows the model to learn more complex patterns in the text, but requires more compute resources and training time. In our setup, we use <strong>[N]</strong> transformer blocks.</p>
+<p><strong>Single block:</strong></p>
+<p><img src="./static/blog5/Single_block.png" class="img-fluid"></p>
+</section>
+<section id="language-head" class="level2">
+<h2 class="anchored" data-anchor-id="language-head">Language Head</h2>
+<p>It takes in the output of the final attention meachanisim and return output of <strong>batch_size × seq_len × vocab_size</strong>. From where model can make predictions of next vocab using a single linear layer that projects from <strong>embedding_dim → vocab_size</strong>. Each vocab has a logits or probability distribution.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">self</span>.lm_head <span class="op">=</span> nn.Linear(config.embedding_dim, config.vocab_size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="complete-model" class="level2">
+<h2 class="anchored" data-anchor-id="complete-model">Complete model:</h2>
+<p><img src="./static/blog5/Finale_gpt_model.png" class="img-fluid"></p>
+</section>
+<section id="now-comes-the-fun-partteaching-our-model-to-actually-speak-shakespeare" class="level2">
+<h2 class="anchored" data-anchor-id="now-comes-the-fun-partteaching-our-model-to-actually-speak-shakespeare">Now comes the fun part—teaching our model to actually speak Shakespeare!</h2>
+<p>To train our model, we need a <strong>loss function</strong> a way to measure how wrong our predictions are. For language modeling <strong>Cross-entropy</strong> used which measures how far our predicted probability distribution is from the actual next character. If the actual next character is ‘e’ and our model gives it a 90% probability, that’s great! But if it only gives ‘e’ a 5% probability, the cross-entropy loss will be high, signaling the model needs to improve.</p>
+<p><strong>Hyperparameters</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 22%">
+<col style="width: 41%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Batch Size</strong></td>
+<td>256</td>
+<td>Number of sequences processed in parallel</td>
+</tr>
+<tr class="even">
+<td><strong>Sequence Length</strong></td>
+<td>128</td>
+<td>Context window (max tokens the model can see)</td>
+</tr>
+<tr class="odd">
+<td><strong>Embedding Dimension</strong></td>
+<td>128</td>
+<td>Size of token/positional embeddings</td>
+</tr>
+<tr class="even">
+<td><strong>Number of Layers</strong></td>
+<td>4</td>
+<td>Transformer blocks stacked</td>
+</tr>
+<tr class="odd">
+<td><strong>Number of Heads</strong></td>
+<td>8</td>
+<td>Attention heads per block</td>
+</tr>
+<tr class="even">
+<td><strong>Vocabulary Size</strong></td>
+<td>65</td>
+<td>Total unique characters in dataset</td>
+</tr>
+<tr class="odd">
+<td><strong>Dropout</strong></td>
+<td>0.1</td>
+<td>Dropout probability for regularization</td>
+</tr>
+<tr class="even">
+<td><strong>Learning Rate</strong></td>
+<td>1e-3</td>
+<td>Fixed learning rate for Adam optimizer</td>
+</tr>
+<tr class="odd">
+<td><strong>Max Gradient Norm</strong></td>
+<td>1.0</td>
+<td>Gradient clipping threshold</td>
+</tr>
+<tr class="even">
+<td><strong>Device</strong></td>
+<td>CUDA/CPU</td>
+<td>Automatic GPU detection</td>
+</tr>
+<tr class="odd">
+<td><strong>Dtype</strong></td>
+<td>bfloat16/float16</td>
+<td>Mixed precision training</td>
+</tr>
+<tr class="even">
+<td><strong>epochs</strong></td>
+<td>75</td>
+<td>No of steps the training is done</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Training setup</strong>: I used the Adam optimizer with a fixed learning rate of 1e-3 and trained for 75 epochs. On Colab’s free tier GPU, this took a while (grab a coffee!), but it’s totally doable without fancy hardware.</p>
+</section>
+<section id="generation-inference" class="level2">
+<h2 class="anchored" data-anchor-id="generation-inference">Generation (Inference)</h2>
+<p>Now that our model is trained, let’s make it generate some Shakespeare! The function takes a prompt (like “To be or not to be”) and predicts characters one at a time.</p>
+<p><strong>Key parameters:</strong> - <strong>max_new_tokens</strong>: How many new characters to generate - <strong>temperature</strong>: Controls randomness. Higher values (like 1.5) make it more creative/chaotic, lower values (like 0.5) make it more predictable and coherent</p>
+<p><strong>How it works:</strong> 1. Start with your prompt, convert it to tokens 2. Feed it through the model to get predictions for the next character 3. Sample a character based on those predictions (with some randomness controlled by temperature) 4. Add that character to the sequence and repeat</p>
+<p>The model keeps the conversation going character by character until it hits the max_new_tokens limit. It’s autoregressive—each new prediction depends on everything that came before!</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@torch.no_grad</span>() </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate(prompt, max_new_tokens<span class="op">=</span><span class="dv">100</span>, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    prompt: string to start generation</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    max_new_tokens: how many tokens to generate</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">    temperature: higher = more random, lower = more deterministic</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> tokenizer.encode(prompt)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> torch.tensor(tokens).unsqueeze(<span class="dv">0</span>)  <span class="co"># Add batch dim</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> tokens.to(<span class="st">'cuda'</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(max_new_tokens):</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Crop to last seq_len tokens if needed</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        context <span class="op">=</span> tokens <span class="cf">if</span> tokens.size(<span class="dv">1</span>) <span class="op">&lt;=</span> model.embed.pos_ids.size(<span class="dv">0</span>) <span class="cf">else</span> tokens[:, <span class="op">-</span>model.embed.pos_ids.size(<span class="dv">0</span>):]</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get predictions</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> torch.no_grad(), torch.autocast(device_type<span class="op">=</span><span class="st">'cuda'</span>, dtype<span class="op">=</span>torch.bfloat16):</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>          logits <span class="op">=</span> model(context)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        logits <span class="op">=</span> logits[:, <span class="op">-</span><span class="dv">1</span>, :] <span class="op">/</span> temperature  <span class="co"># Focus on last token</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Sample next token</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        probs <span class="op">=</span> torch.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        next_token <span class="op">=</span> torch.multinomial(probs, num_samples<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Append to sequence</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> torch.cat([tokens, next_token], dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tokenizer.decode(tokens.squeeze().tolist())</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(generate(<span class="st">"To be or not to be"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>This project successfully implemented a character-level transformer model trained on Shakespeare’s text. The model learned to generate coherent, Shakespeare-style text by predicting characters one at a time. The model demonstrates the power of the transformer architecture even in a resource-constrained setting (single GPU on Colab’s free tier).</p>
+<p><strong>What worked well:</strong> - The attention mechanism effectively captured dependencies between characters - Character-level tokenization kept the vocabulary small (65 tokens) and manageable - The model converged and produced recognizable Shakespeare-style patterns</p>
+<p><strong>Areas for improvement:</strong></p>
+<p>Several optimization techniques were not implemented in this version but could significantly improve performance:</p>
+<ol type="1">
+<li><strong>Proper weight initialization</strong>: The layers were not initialized optimally, which may have slowed convergence and required more training epochs.</li>
+<li><strong>Learning rate scheduling</strong>: A fixed learning rate was used throughout training. Implementing a learning rate schedule (such as cosine decay or warmup followed by decay) would allow the model to take larger steps early in training and fine-tune more carefully later.</li>
+<li><strong>Regularization</strong>: Weight decay in the Adam optimizer was not properly tuned, which could help prevent overfitting and improve generalization.</li>
+</ol>
+<p><strong>Next steps:</strong></p>
+<p>Future iterations could explore more advanced techniques used in modern language models:</p>
+<ul>
+<li><strong>RoPE (Rotary Position Encoding)</strong>: A more effective positional encoding scheme used in models like LLaMA</li>
+<li><strong>Grouped Query Attention (GQA)</strong>: An efficient attention variant that reduces memory usage while maintaining performance</li>
+<li><strong>Flash Attention</strong>: Optimized attention implementation for faster training</li>
+<li><strong>Multimodal training</strong>: Extending beyond text to handle multiple data types</li>
+</ul>
+<p>This project serves as a solid foundation for understanding how transformers work under the hood and provides a stepping stone toward implementing more sophisticated architectures.</p>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<ol type="1">
+<li><strong>Attention is All You Need</strong> - The original transformer paper <a href="https://arxiv.org/pdf/1706.03762">Vaswani et al., 2017</a></li>
+<li><strong>Andrej Karpathy’s “Let’s build GPT”</strong> - The video tutorial you followed</li>
+<li><strong>Shakespeare</strong> <a href="https://github.com/karpathy/build-nanogpt">dataset</a></li>
+<li><strong>GPT2 paper</strong>: <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">Improving Language Understanding by Generative Pre-Training</a></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/tripathysagar\.github\.io\/sagaTrip");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
