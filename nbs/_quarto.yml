@@ -58,6 +58,7 @@ website:
           - 03_DAFTSFT.ipynb
           - 07_DistilationWeightInit.ipynb
           - 11_llm-arithmetic-experiments.ipynb
+          - 12_sft-from-scratch.ipynb
       - section: "🤖 Agents"
         contents:
           - 08_AgentFromFirstPrinciple.ipynb

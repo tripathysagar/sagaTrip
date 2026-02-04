@@ -13,3 +13,4 @@ website:
       - 09_KhazadDum.ipynb
       - 10_BenchmarkingTOkenizer4Odia.ipynb
       - 11_llm-arithmetic-experiments.ipynb
+      - 12_sft-from-scratch.ipynb
