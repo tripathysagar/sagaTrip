@@ -59,6 +59,7 @@ website:
           - 07_DistilationWeightInit.ipynb
           - 11_llm-arithmetic-experiments.ipynb
           - 12_sft-from-scratch.ipynb
+          - 13_grpo-reward-design.ipynb
       - section: "🤖 Agents"
         contents:
           - 08_AgentFromFirstPrinciple.ipynb
