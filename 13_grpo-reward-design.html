@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Binary Beats Tiered: GRPO Reward Design on GSM8K – sagaTrip</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-622d0528232fffd36c19fe59caae1e98.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Binary Beats Tiered: GRPO Reward Design on GSM8K – sagaTrip">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://tripathysagar.github.io/sagaTrip/static/blog13/pipeline_flow.png">
+<meta property="og:site_name" content="sagaTrip">
+<meta property="og:image:alt" content="Pipeline: Base → SFT → GRPO">
+<meta property="og:image:height" content="360">
+<meta property="og:image:width" content="1485">
+<meta name="twitter:title" content="Binary Beats Tiered: GRPO Reward Design on GSM8K – sagaTrip">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://tripathysagar.github.io/sagaTrip/static/blog13/pipeline_flow.png">
+<meta name="twitter:image:alt" content="Pipeline: Base → SFT → GRPO">
+<meta name="twitter:image-height" content="360">
+<meta name="twitter:image-width" content="1485">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/resume.html" target="_blank"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://tripathysagar.github.io/PMPP/" target="_blank"> 
+<span class="menu-text">PMPP Notes</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:tripathysagar08@gmail.com"> <i class="bi bi-envelope" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/sagar-tripathy" target="_blank"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/tripathysagar" target="_blank"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.youtube.com/@SimSagaTrip" target="_blank"> <i class="bi bi-youtube" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://x.com/tripathy_sagar0" target="_blank"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">📍 Open to Remote/Relocation</span>
+    </span>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title">Binary Beats Tiered: GRPO Reward Design on GSM8K</h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">🧠 Transformers</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llmforwardpass.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Magic Behind the Curtain: How LLMs Actually Generate Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gptdecoder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building a Text Only Nano-GPT from Scratch: Character-Level Shakespeare Generation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multimodal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building a Multi Modal Nano-GPT from Scratch: Shakespeare Meets Fashion MNIST</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">🔧 Fine-Tuning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lorapytorch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LoRA Explained: Fine-Tune Large Models with 90% Fewer Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./daftsft.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Domain Adaption Fine-Tuning with LoRA: My Experiment on Mac M1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distilationweightinit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CPU-Friendly Bash Generation: Distilling Qwen2.5-Coder for Local Deployment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./llm-arithmetic-experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small LLMs Can’t Add—But They Can Learn to Ask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sft-from-scratch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SFT from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_grpo-reward-design.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Binary Beats Tiered: GRPO Reward Design on GSM8K</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">🤖 Agents</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./agentfromfirstprinciple.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Agent From First Principle</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./KhazadDum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Khazad Dum - Delving for Data with a Text2SQL Agent</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./readyapi_migration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Migrating API Test Cases from ReadyAPI to Robot Framework</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">📚 Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pythonwalkthrough.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python for Programmers: Fast Track to Productivity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./benchmarkingtokenizer4odia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Benchmarking LLM Tokenizers for Odia: A Comparative Study</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link active" data-scroll-target="#the-problem">The Problem</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#experiment-iteration" id="toc-experiment-iteration" class="nav-link" data-scroll-target="#experiment-iteration">Experiment Iteration</a>
+  <ul class="collapse">
+  <li><a href="#stage-1-sft-teaching-the-format" id="toc-stage-1-sft-teaching-the-format" class="nav-link" data-scroll-target="#stage-1-sft-teaching-the-format">Stage 1: SFT — Teaching the Format</a></li>
+  <li><a href="#stage-2-binary-vs-tiered-reward" id="toc-stage-2-binary-vs-tiered-reward" class="nav-link" data-scroll-target="#stage-2-binary-vs-tiered-reward">Stage 2: Binary vs Tiered Reward</a></li>
+  <li><a href="#stage-3-hyperparameter-sweep" id="toc-stage-3-hyperparameter-sweep" class="nav-link" data-scroll-target="#stage-3-hyperparameter-sweep">Stage 3: Hyperparameter Sweep</a></li>
+  <li><a href="#stage-4-multi-seed-validation" id="toc-stage-4-multi-seed-validation" class="nav-link" data-scroll-target="#stage-4-multi-seed-validation">Stage 4: Multi-Seed Validation</a></li>
+  <li><a href="#stage-5-scaling-up-training" id="toc-stage-5-scaling-up-training" class="nav-link" data-scroll-target="#stage-5-scaling-up-training">Stage 5: Scaling Up Training</a></li>
+  </ul></li>
+  <li><a href="#lessons-learned" id="toc-lessons-learned" class="nav-link" data-scroll-target="#lessons-learned">Lessons Learned</a></li>
+  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">Code</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Binary Beats Tiered: GRPO Reward Design on GSM8K</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>A 0.5B model goes from 25% to 50% on grade-school math — and the simpler reward wins.</p>
+</blockquote>
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>I wanted to test a hypothesis: to train a <strong>SLM</strong>(Small language model) to solve basic math problems. To achieve this, I implemented an RL pipeline with SFT followed by <strong>RLVR</strong>(RL with Verifiable Reward). I picked <code>Qwen2.5-0.5B</code> - small enough to LoRA fine-tune on a free Colab GPU and <strong>GSM8K</strong> as the training dataset. The process of RLVR requires the model to generate multiple generations, then use a deterministic function that scores each generation. The model then tries to maximize the reward. This post walks through building the full end-to-end RL training and reasoning behind it.</p>
+<p>Spoiler alert: the binary reward won. The rest of this post is about why, and what I learned along the way.</p>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The Problem</h2>
+<p>To teach a Small Model to Reason : <strong>GRPO</strong> (Group Relative Policy Optimization) is a reinforcement learning algorithm from <a href="https://arxiv.org/abs/2402.03300">DeepSeek</a>. The core idea: generate multiple responses to the same prompt, score them with a reward function, and update the policy(model) to favor the better ones — no critic model needed. The “group relative” part means rewards are normalized within each group, so the model learns from <em>relative</em> quality, not absolute scores. Simple, elegant, and cheap to run.</p>
+<p>But here’s the open question: <strong>what reward signal do you actually give it?</strong></p>
+<p>Reason behind picking <strong>GSM8K</strong> as it’s ideal for testing reward design. The answers are just numbers — easy to verify programmatically. The problems require multi-step reasoning, so the model can’t just pattern-match. And everyone benchmarks on it, so the results are comparable.</p>
+<p><img src="static/blog13/pipeline_flow.png" alt="Pipeline: Base → SFT → GRPO" width="600"></p>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 55%">
+<col style="width: 45%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Base model</strong></td>
+<td>Qwen2.5-0.5B</td>
+</tr>
+<tr class="even">
+<td><strong>Algorithm</strong></td>
+<td>SFT → GRPO (two-stage)</td>
+</tr>
+<tr class="odd">
+<td><strong>LoRA</strong></td>
+<td>r=32, α=16 (SFT) / r=16, α=32 (GRPO) — higher effective scaling (α/r = 2) during GRPO to amplify reward signal</td>
+</tr>
+<tr class="even">
+<td><strong>Train data</strong></td>
+<td>1024 GSM8K examples</td>
+</tr>
+<tr class="odd">
+<td><strong>Eval</strong></td>
+<td>660 examples (50% of GSM8K test)</td>
+</tr>
+<tr class="even">
+<td><strong>Hardware</strong></td>
+<td>Colab T4/L4 GPU</td>
+</tr>
+</tbody>
+</table>
+<p>The stack: <code>trl</code> and <code>transformers</code> for SFT and GRPO training, <code>peft</code> for LoRA, <code>torch</code> as the backend, <code>wandb</code> for experiment tracking, and <a href="https://github.com/tripathysagar/rlhf-gsm8k"><code>gsm8k_utils</code></a> — a small custom library wrapping prompt formatting, answer extraction, and the <code>GRPOExperiment</code> class for reproducible runs.</p>
+<p>The first step was formatting GSM8K into a <strong>chat template</strong> — system prompt + user question + assistant response ending with <code>The answer is: {number}.</code> This gives the model a consistent structure to learn from during SFT, and a parseable format to reward during GRPO.</p>
+</section>
+<section id="experiment-iteration" class="level2">
+<h2 class="anchored" data-anchor-id="experiment-iteration">Experiment Iteration</h2>
+<section id="stage-1-sft-teaching-the-format" class="level3">
+<h3 class="anchored" data-anchor-id="stage-1-sft-teaching-the-format">Stage 1: SFT — Teaching the Format</h3>
+<p>Before throwing RL at this model, it needed to learn the <em>format</em> — how to take a question, reason through it step-by-step, and land on <code>The answer is: {number}.</code> That’s what SFT does here: not teaching math, just teaching manners or following given instructions.</p>
+<p><strong>Suspiciously good baseline.</strong> The base model scored <strong>24.39%</strong> on 660 eval examples <em>before any training</em>. For a 0.5B model, that’s surprisingly high — there’s a decent chance GSM8K leaked into its pre-training data. I noted it and moved on.</p>
+<p><strong>Light touch.</strong> I fine-tuned with LoRA (r=32, α=16) on just <strong>1024 examples for 1 epoch</strong>. More epochs actually hurt — the loss kept dropping but eval accuracy degraded, a classic sign of overfitting/catastrophic forgetting. One epoch was the sweet spot: <strong>24.39% → 31.36%</strong>.</p>
+<p><strong>Vibe check.</strong> The model gets the right answer… and then doesn’t know when to stop:</p>
+<pre><code>The answer is: 126.książka
+The answer is: 126.książka
+The answer is: 126.książka
+...</code></pre>
+<p>It picked up the format and the reasoning, but its generation quality is terrible — repetition loops, garbage tokens after the answer. This is fine for eval (we just parse the first number), but it shows <em>why we need GRPO</em>: SFT taught the format, now RL needs to teach quality.</p>
+</section>
+<section id="stage-2-binary-vs-tiered-reward" class="level3">
+<h3 class="anchored" data-anchor-id="stage-2-binary-vs-tiered-reward">Stage 2: Binary vs Tiered Reward</h3>
+<p>GRPO needs a reward signal to rank its rollouts. I tested two: a carefully tiered partial-credit scheme, and a dead-simple binary (right/wrong).</p>
+<p>My hunch: tiered rewards might encourage <strong>reward hacking</strong> — the model optimizing for easy partial credit rather than actually solving the problem. Let’s see.</p>
+<ol type="1">
+<li><p><strong>Tiered reward</strong> (partial credit based on closeness + format bonuses):</p>
+<p>| Condition | Reward | |—|—| | Correct answer + correct format | 8.0 | | Correct answer + no format | 3.2 | | Wrong answer + correct format | 1.6 + 1.2 × closeness | | Wrong answer + no format | 1.2 × closeness | | No number extracted | 0.0 |</p>
+<p>Where <code>closeness = max(0, 1 - |answer - gold| / max(|gold|, 1))</code> — ranges from 0 (way off) to 1 (spot on), giving partial credit for being in the right ballpark.</p>
+<ul>
+<li>Pre-GRPO: <strong>25.15%</strong> → Post-GRPO: <strong>33.18%</strong></li>
+</ul></li>
+<li><p><strong>Binary reward</strong> (just 1.0 or 0.0):</p>
+<p>| Condition | Reward | |—|—| | Correct answer | 1.0 | | Incorrect answer | 0.0 |</p>
+<ul>
+<li>Pre-GRPO: <strong>25.76%</strong> → Post-GRPO: <strong>35.91%</strong></li>
+</ul></li>
+</ol>
+<p><em>(The slightly different baselines — 25.15% vs 25.76% — are from separate runs with different random seeds.)</em></p>
+<p>Binary beat tiered by ~2.7 percentage points (35.91% vs 33.18%). The cleaner signal won — no partial credit to game, just right or wrong.</p>
+</section>
+<section id="stage-3-hyperparameter-sweep" class="level3">
+<h3 class="anchored" data-anchor-id="stage-3-hyperparameter-sweep">Stage 3: Hyperparameter Sweep</h3>
+<p>Binary reward locked in. Next question: what hyperparameters actually matter?</p>
+<p>I swept four parameters one-at-a-time against a base config (<code>max_steps=100</code>, <code>max_completion_length=512</code>), 10 runs total on a Colab T4:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Values tested</th>
+<th>Best</th>
+<th>Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>beta</code> (KL penalty)</td>
+<td>0.01, 0.02, <strong>0.04</strong></td>
+<td>0.04</td>
+<td><strong>37.42%</strong></td>
+</tr>
+<tr class="even">
+<td><code>learning_rate</code></td>
+<td>1e-5, <strong>5e-5</strong>, 1e-4</td>
+<td>5e-5</td>
+<td>35.61%</td>
+</tr>
+<tr class="odd">
+<td><code>num_generations</code></td>
+<td>8, <strong>16</strong></td>
+<td>16</td>
+<td>32.58%</td>
+</tr>
+<tr class="even">
+<td><code>sft_frac</code></td>
+<td>0.0, 0.5, <strong>1.0</strong></td>
+<td>1.0</td>
+<td>33.79%</td>
+</tr>
+</tbody>
+</table>
+<p>A few things jumped out:</p>
+<ul>
+<li><strong><code>lr=1e-4</code> was catastrophic</strong> — accuracy dropped to 26.82%, <em>below</em> the SFT baseline. Too aggressive.</li>
+<li><strong><code>sft_frac=0.0</code> also hurt</strong> (27.73%) — pure GRPO without any SFT loss mixing destabilized training. Keeping the SFT loss as a regularizer matters.</li>
+<li><strong><code>beta=0.04</code> was the single biggest winner</strong> — a higher KL penalty kept the model from drifting too far from the SFT checkpoint.</li>
+<li><strong><code>num_generations=16</code> was chosen over 8</strong> despite 8 scoring slightly higher in the sweep (32.58% vs 31.67%). More generations per step means faster iteration through the dataset — the model sees more of the training distribution sooner. The sweep difference was within noise, but 16 scales better with longer training.</li>
+</ul>
+<p><img src="static/blog13/chart_beta_sweep.png" alt="Beta Sweep" width="600"></p>
+<p>Best combined config for the final run (200 steps): <code>beta=0.04, lr=5e-5, num_generations=16, sft_frac=1.0</code>.</p>
+</section>
+<section id="stage-4-multi-seed-validation" class="level3">
+<h3 class="anchored" data-anchor-id="stage-4-multi-seed-validation">Stage 4: Multi-Seed Validation</h3>
+<p>RL training is messy. The same config can land in different spots depending on random seed — LoRA init, data shuffling is fixed for uniformity of the experiment, rollout sampling all introduce variance. One good run doesn’t prove anything.</p>
+<p>So I ran the best config (beta=0.04, lr=5e-5, num_generations=16, sft_frac=1.0) for 200 steps across three seeds:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Seed</th>
+<th>Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>42</td>
+<td>40.00%</td>
+</tr>
+<tr class="even">
+<td>1337</td>
+<td>37.27%</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>36.06%</td>
+</tr>
+<tr class="even">
+<td><strong>Mean ± std</strong></td>
+<td><strong>37.78% ± 2.61%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><img src="static/blog13/chart_multi_seed.png" alt="Multi-Seed Validation" width="600"></p>
+<p>That ~5% spread between best and worst seed is real — at 0.5B parameters, you’re at the mercy of the training lottery. But even the worst seed (34.85%) comfortably beats SFT alone (31.36%), so the signal is real. GRPO is consistently helping, even if the magnitude varies.</p>
+<p><strong>Why 200 steps?</strong> The sweep runs used 100 steps. Doubling it let the best config converge further — and helped separate configs that plateau early from ones that keep climbing.</p>
+</section>
+<section id="stage-5-scaling-up-training" class="level3">
+<h3 class="anchored" data-anchor-id="stage-5-scaling-up-training">Stage 5: Scaling Up Training</h3>
+<p>The sweep used 1024 examples and 100–200 steps. Time to take the best config and throw the full dataset at it.</p>
+<p><strong>One accidental discovery:</strong> the full run used <code>beta=0.02</code> instead of the sweep-winning <code>0.04</code> — a copy-paste oversight. Despite this suboptimal setting, the model still hit nearly 50%. The right beta might push it even higher.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>Sweep (best seed)</th>
+<th>Full run</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Train data</strong></td>
+<td>1024 examples</td>
+<td>~7,473 (full GSM8K)</td>
+</tr>
+<tr class="even">
+<td><strong>Steps</strong></td>
+<td>200</td>
+<td>1,000</td>
+</tr>
+<tr class="odd">
+<td><strong>Effective samples</strong></td>
+<td>~3,200</td>
+<td>~32,000 (~4.3 epochs)</td>
+</tr>
+<tr class="even">
+<td><strong>Accuracy</strong></td>
+<td>40.00%</td>
+<td><strong>49.70%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><img src="static/blog13/chart_full_run.png" alt="Full Dataset GRPO" width="600"></p>
+<p>That’s a 0.5B model hitting nearly <strong>50% on GSM8K</strong> — double the base model’s 24.39%.</p>
+<p><strong>Vibe check.</strong> The generations are noticeably cleaner now:</p>
+<pre><code>In April, Natalia sold 48 clips. In May, she sold 48/2 = 24 clips.
+Altogether, 48 + 24 = 72 clips.
+The answer is: 72.柃</code></pre>
+<p>Still a garbage token at the end (柃 this time — the książka has evolved), but the reasoning chain is coherent, concise, and correct. The model learned to <em>think</em>, even if it hasn’t learned to <em>stop</em>.</p>
+</section>
+</section>
+<section id="lessons-learned" class="level2">
+<h2 class="anchored" data-anchor-id="lessons-learned">Lessons Learned</h2>
+<p><strong>The double <code>format_prompt</code> bug.</strong> My early eval code pre-formatted prompts with the chat template, then the eval function wrapped them <em>again</em> — double-wrapping. The model was being evaluated on garbled inputs, and I didn’t notice until I refactored into <code>gsm8k_utils</code> and the numbers shifted. Lesson: if your eval function formats inputs internally, don’t pre-format them too.</p>
+<p><strong><code>max_length=256</code> silently ate my best examples.</strong> SFT was configured with <code>max_length=256</code> tokens, but ~15% of training examples (153/1024) exceeded that — the hardest problems with the longest reasoning chains. Exactly the ones I most wanted the model to learn from. Bumping to 512 fixed it. Always check how much of your data survives truncation.</p>
+<p><strong>RL variance is no joke at 0.5B.</strong> Three seeds, same config: 36.06%, 37.27%, 40.00%. A ~4% spread. At this scale, a single run can easily mislead you. Always validate with multiple seeds before drawing conclusions.</p>
+</section>
+<section id="code" class="level2">
+<h2 class="anchored" data-anchor-id="code">Code</h2>
+<p>All notebooks, configs, and <code>gsm8k_utils</code> are on GitHub: <a href="https://github.com/tripathysagar/rlhf-gsm8k">tripathysagar/rlhf-gsm8k</a></p>
+<p>Training logs on W&amp;B: <a href="https://wandb.ai/tripathysagar08/grpo-gsm8k">grpo-gsm8k</a> | <a href="https://wandb.ai/tripathysagar08/grpo-gsm8k-full">grpo-gsm8k-full</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/tripathysagar\.github\.io\/sagaTrip");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tripathysagar/sagaTrip/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
