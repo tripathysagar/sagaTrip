@@ -64,6 +64,7 @@ website:
         contents:
           - 08_AgentFromFirstPrinciple.ipynb
           - 09_KhazadDum.ipynb
+          - 14_ReadyAPI_migration.ipynb
       - section: "📚 Fundamentals"
         contents:
           - 04_PythonWalkThrough.ipynb
