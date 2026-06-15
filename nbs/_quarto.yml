@@ -65,6 +65,7 @@ website:
           - 08_AgentFromFirstPrinciple.ipynb
           - 09_KhazadDum.ipynb
           - 14_ReadyAPI_migration.ipynb
+          - 15_FunSearchFromScratch.ipynb
       - section: "📚 Fundamentals"
         contents:
           - 04_PythonWalkThrough.ipynb

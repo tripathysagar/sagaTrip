@@ -5,7 +5,4 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://tripathysagar.github.io',
                 'git_url': 'https://github.com/tripathysagar/sagaTrip',
                 'lib_path': 'sagaTrip'},
-  'syms': { 'sagaTrip.Comp': { 'sagaTrip.Comp.Comp': ('complex.html#comp', 'sagaTrip/Comp.py'),
-                               'sagaTrip.Comp.Comp.__init__': ('complex.html#comp.__init__', 'sagaTrip/Comp.py'),
-                               'sagaTrip.Comp.Comp.__str__': ('complex.html#comp.__str__', 'sagaTrip/Comp.py')},
-            'sagaTrip.core': {'sagaTrip.core.foo': ('core.html#foo', 'sagaTrip/core.py')}}}
+  'syms': {}}

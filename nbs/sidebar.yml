@@ -16,3 +16,4 @@ website:
       - 12_sft-from-scratch.ipynb
       - 13_grpo-reward-design.ipynb
       - 14_ReadyAPI_migration.ipynb
+      - 15_FunSearchFromScratch.ipynb

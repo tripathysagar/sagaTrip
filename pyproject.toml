@@ -1,11 +1,30 @@
 [build-system]
-requires = ["setuptools>=64.0"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="sagaTrip"
-requires-python=">=3.9"
-dynamic = [ "keywords", "description", "version", "dependencies", "optional-dependencies", "readme", "license", "authors", "classifiers", "entry-points", "scripts", "urls"]
+name = "sagaTrip"
+dynamic = ["version"]
+description = ""
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
+authors = [{name = "tripathysagar", email = "tripathysagar08@gmail.com"}]
+keywords = ['nbdev', 'jupyter', 'notebook', 'python']
+classifiers = ["Natural Language :: English", "Intended Audience :: Developers", "Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3 :: Only"]
+dependencies = ['torch', 'torchvision', 'transformers', 'matplotlib', 'numpy']
 
-[tool.uv]
-cache-keys = [{ file = "pyproject.toml" }, { file = "settings.ini" }, { file = "setup.py" }]
+[project.urls]
+Repository = "https://github.com/tripathysagar/sagaTrip"
+Documentation = "https://tripathysagar.github.io/sagaTrip"
+
+[project.entry-points.nbdev]
+sagaTrip = "sagaTrip._modidx:d"
+
+[tool.setuptools.dynamic]
+version = {attr = "sagaTrip.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["sagaTrip"]
+
+[tool.nbdev]
